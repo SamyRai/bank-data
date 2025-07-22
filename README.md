@@ -2,6 +2,10 @@
 
 A Go (Golang) package for financial and banking data processing, starting with IBAN validation, parsing, and detection.
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/SamyRai/bank-data.svg)](https://pkg.go.dev/github.com/SamyRai/bank-data)
+[![Test & Coverage](https://github.com/SamyRai/bank-data/actions/workflows/test.yml/badge.svg)](https://github.com/SamyRai/bank-data/actions/workflows/test.yml)
+[![Lint](https://github.com/SamyRai/bank-data/actions/workflows/lint.yml/badge.svg)](https://github.com/SamyRai/bank-data/actions/workflows/lint.yml)
+
 ## Features
 
 - IBAN validation (format and checksum)
@@ -25,7 +29,4 @@ go test ./...
 
 ## TODO
 
-- [ ] Add support for more IBAN countries and structures (high, 2d)
-- [ ] Improve error types and messages (medium, 1d)
-- [ ] Add logging and monitoring (medium, 1d)
-- [ ] Optimize performance for large-scale validation (low, 2d)
+See [TODO.md](TODO.md)
