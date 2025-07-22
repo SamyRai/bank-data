@@ -106,10 +106,7 @@ func Validate(bic string, strictWhitelist ...bool) error {
 	if err := validateBICSemantic(bic); err != nil {
 		return err
 	}
-	strict := false
-	if len(strictWhitelist) > 0 && strictWhitelist[0] {
-		strict = true
-	}
+	strict := len(strictWhitelist) > 0 && strictWhitelist[0]
 	if err := validateBICDirectory(bic, strict); err != nil {
 		return err
 	}
