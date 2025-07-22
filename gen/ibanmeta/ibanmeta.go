@@ -230,19 +230,3 @@ func parseBBANTokensManual(bban string) []string {
 	}
 	return tokens
 }
-
-func parseRange(s string) (int, int) {
-	s = strings.TrimSpace(s)
-	if s == "" || s == "N/A" {
-		return 0, 0
-	}
-	parts := strings.Split(s, "-")
-	if len(parts) == 2 {
-		start, _ := strconv.Atoi(strings.TrimSpace(parts[0]))
-		end, _ := strconv.Atoi(strings.TrimSpace(parts[1]))
-		return start, end
-	}
-	// If only one number, treat as start==end
-	val, _ := strconv.Atoi(s)
-	return val, val
-}
