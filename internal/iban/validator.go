@@ -5,8 +5,10 @@ import (
 	"regexp"
 	"strings"
 
+	bicmap "github.com/SamyRai/bank-data/internal/bic/map"
 	"github.com/SamyRai/bank-data/internal/countrymeta"
 	"github.com/SamyRai/bank-data/internal/log"
+	"github.com/SamyRai/bank-data/pkg/bank"
 	"github.com/SamyRai/bank-data/pkg/iban"
 )
 
@@ -65,6 +67,37 @@ func (v *validator) Validate(ibanStr string) error {
 	}
 	log.Info("IBAN validated successfully", log.Fields{"iban": ibanStrNorm, "operation": "validate"})
 	return nil
+}
+
+// ValidateAndBankInfo validates the IBAN and returns BankInfo if valid.
+func (v *validator) ValidateAndBankInfo(ibanStr string, bicMap bicmap.BankBICMap) (*bank.BankInfo, error) {
+	ibanStrNorm := strings.ToUpper(strings.ReplaceAll(ibanStr, " ", ""))
+	if len(ibanStrNorm) < 4 {
+		return nil, iban.ErrWrongLength
+	}
+	country := ibanStrNorm[:2]
+	meta, ok := countrymeta.Registry[country]
+	if !ok {
+		return nil, iban.ErrUnsupportedCountry
+	}
+	if len(ibanStrNorm) != meta.Length {
+		return nil, iban.ErrWrongLength
+	}
+	// Extract bank code using meta
+	bankCode := ""
+	bbanOffset := 4
+	if meta.BankStart > 0 && meta.BankEnd > 0 && meta.BankEnd > meta.BankStart {
+		start := bbanOffset + (meta.BankStart - 1)
+		end := bbanOffset + meta.BankEnd
+		if end <= len(ibanStrNorm) && start < end {
+			bankCode = ibanStrNorm[start:end]
+		}
+	}
+	bankInfo, ok := bicMap.LookupBankInfo(country, bankCode)
+	if !ok {
+		return nil, iban.ErrBankInfoNotFound
+	}
+	return bankInfo, nil
 }
 
 // validateIBANChecksum implements the IBAN checksum validation algorithm using streaming MOD-97.

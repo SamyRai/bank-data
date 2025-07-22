@@ -33,7 +33,7 @@ func parseBBANTokensManual(bban string) []string {
 }
 
 func main() {
-	data, err := os.ReadFile("iban-registry.txt")
+	data, err := os.ReadFile("datasets/iban-registry.txt")
 	if err != nil {
 		panic(err)
 	}

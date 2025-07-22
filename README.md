@@ -41,6 +41,7 @@ if err != nil {
 - **Typed Error Handling**: Domain-specific, typed errors for all validation outcomes.
 - **Logging**: Structured logging for validation and parsing events.
 - **Batch and Fuzz Testing**: High test coverage, including edge cases and fuzzing.
+- **Cross-Field and Conditional Validation**: Validate relationships between multiple fields (e.g., account and country) and support conditional rules. Easily register cross-field validators in the ValidationRegistry for use in the service layer or for custom business logic.
 
 ## Project Structure
 

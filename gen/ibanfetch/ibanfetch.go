@@ -13,7 +13,7 @@ import (
 )
 
 const SwiftURL = "https://www.swift.com/swift-resource/11971/download"
-const OutFile = "iban_registry.txt"
+const OutFile = "datasets/iban_registry.txt"
 
 // progressReader wraps an io.Reader and prints progress to stdout.
 type progressReader struct {
