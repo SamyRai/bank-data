@@ -44,11 +44,21 @@ func (p *parser) Parse(ibanStr string) (*iban.IBANInfo, error) {
 	checkDigits := ibanStrNorm[2:4]
 	bankCode := ""
 	accountNumber := ""
-	if meta.BankEnd > meta.BankStart && meta.BankEnd <= len(ibanStrNorm) {
-		bankCode = ibanStrNorm[meta.BankStart:meta.BankEnd]
+	// BBAN starts at position 4 in IBAN
+	bbanOffset := 4
+	if meta.BankStart > 0 && meta.BankEnd > 0 && meta.BankEnd > meta.BankStart {
+		start := bbanOffset + (meta.BankStart - 1)
+		end := bbanOffset + meta.BankEnd
+		if end <= len(ibanStrNorm) && start < end {
+			bankCode = ibanStrNorm[start:end]
+		}
 	}
-	if meta.AccountEnd > meta.AccountStart && meta.AccountEnd <= len(ibanStrNorm) {
-		accountNumber = ibanStrNorm[meta.AccountStart:meta.AccountEnd]
+	if meta.AccountStart > 0 && meta.AccountEnd > 0 && meta.AccountEnd > meta.AccountStart {
+		start := bbanOffset + (meta.AccountStart - 1)
+		end := bbanOffset + meta.AccountEnd
+		if end <= len(ibanStrNorm) && start < end {
+			accountNumber = ibanStrNorm[start:end]
+		}
 	}
 	log.Info("IBAN parsed successfully", log.Fields{"iban": ibanStrNorm, "operation": "parse"})
 	return &iban.IBANInfo{

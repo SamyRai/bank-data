@@ -17,16 +17,44 @@ func main() {
 }
 
 func run() error {
+	// Prefer local iban-registry.txt if it exists in project root
+	const localFile = "iban-registry.txt"
+	if _, err := os.Stat(localFile); err == nil {
+		log.Info("Using local IBAN registry file", log.Fields{"file": localFile})
+		code, err := ibanmeta.GenerateRegistry(localFile)
+		if err != nil {
+			log.Error("Registry generation failed", log.Fields{"err": err.Error()})
+			return err
+		}
+		f, err := os.Create("internal/countrymeta/registry.go")
+		if err != nil {
+			log.Error("Failed to open registry.go for writing", log.Fields{"err": err.Error()})
+			return err
+		}
+		defer func() {
+			if cerr := f.Close(); cerr != nil {
+				log.Warn("Failed to close registry.go", log.Fields{"err": cerr.Error()})
+			}
+		}()
+		_, err = f.Write(code)
+		if err != nil {
+			log.Error("Failed to write registry.go", log.Fields{"err": err.Error()})
+			return err
+		}
+		log.Info("Successfully updated registry.go from local IBAN registry.", nil)
+		return nil
+	}
+	// Fallback: try to download
 	if err := ibanfetch.DownloadIBANRegistry(); err != nil {
 		log.Error("Failed to download IBAN registry", log.Fields{"err": err.Error()})
 		return err
 	}
-	code, err := ibanmeta.GenerateRegistry("iban_registry.csv")
+	code, err := ibanmeta.GenerateRegistry("iban_registry.txt")
 	if err != nil {
 		log.Error("Registry generation failed", log.Fields{"err": err.Error()})
 		return err
 	}
-	f, err := os.Create("../../internal/countrymeta/registry.go")
+	f, err := os.Create("internal/countrymeta/registry.go")
 	if err != nil {
 		log.Error("Failed to open registry.go for writing", log.Fields{"err": err.Error()})
 		return err
@@ -41,6 +69,6 @@ func run() error {
 		log.Error("Failed to write registry.go", log.Fields{"err": err.Error()})
 		return err
 	}
-	log.Info("Successfully updated registry.go from latest IBAN registry.", nil)
+	log.Info("Successfully updated registry.go from downloaded IBAN registry.", nil)
 	return nil
 }

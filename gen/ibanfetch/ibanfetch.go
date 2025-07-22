@@ -12,8 +12,8 @@ import (
 	"github.com/SamyRai/bank-data/internal/log"
 )
 
-const SwiftURL = "https://www.swift.com/sites/default/files/documents/iban_registry.csv"
-const OutFile = "iban_registry.csv"
+const SwiftURL = "https://www.swift.com/swift-resource/11971/download"
+const OutFile = "iban_registry.txt"
 
 // progressReader wraps an io.Reader and prints progress to stdout.
 type progressReader struct {
@@ -48,6 +48,11 @@ func (p *progressReader) printProgress() {
 
 // DownloadIBANRegistry downloads the official SWIFT IBAN registry CSV to OutFile with progress.
 func DownloadIBANRegistry() error {
+	// If the file already exists, skip download
+	if _, err := os.Stat(OutFile); err == nil {
+		log.Info("IBAN registry file already exists, skipping download", log.Fields{"file": OutFile})
+		return nil
+	}
 	resp, err := http.Get(SwiftURL)
 	if err != nil {
 		return err
