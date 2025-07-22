@@ -1,6 +1,6 @@
 # bank-data
 
-A Go (Golang) clean architecture package for financial and banking data processing, starting with IBAN validation, parsing, and detection.
+A Go (Golang) package for financial and banking data processing, starting with IBAN validation, parsing, and detection.
 
 ## Features
 

@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/SamyRai/bank-data/internal/countrymeta"
 	"github.com/SamyRai/bank-data/internal/log"
 	"github.com/SamyRai/bank-data/pkg/iban"
 )
@@ -32,6 +33,29 @@ func (v *validator) Validate(ibanStr string) error {
 		err.Value = ibanStr
 		log.Warn("IBAN validation failed: invalid characters", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
 		return &err
+	}
+	country := ibanStrNorm[:2]
+	meta, ok := countrymeta.Registry[country]
+	if !ok {
+		err := *iban.ErrUnsupportedCountry
+		err.Value = country
+		log.Warn("IBAN validation failed: unsupported country", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
+		return &err
+	}
+	if len(ibanStrNorm) != meta.Length {
+		err := *iban.ErrWrongLength
+		err.Value = ibanStr
+		log.Warn("IBAN validation failed: wrong length for country", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
+		return &err
+	}
+	// Regex validation using pre-compiled regex in meta.Regex
+	if meta.Regex != nil {
+		if !meta.Regex.MatchString(ibanStrNorm) {
+			err := *iban.ErrInvalidFormat
+			err.Value = ibanStr
+			log.Warn("IBAN validation failed: regex", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
+			return &err
+		}
 	}
 	if !validateIBANChecksum(ibanStrNorm) {
 		err := *iban.ErrChecksum
