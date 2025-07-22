@@ -1,0 +1,74 @@
+# .golangci.yml — recommended baseline for 2025+
+version: "2"
+
+linters:
+  default: standard
+  enable:
+    - staticcheck      # deep SSA checks
+    - errcheck         # unhandled errors
+    - errorlint        # idiomatic error wrapping
+    - revive           # style; configurable
+    - gosec            # security (SQL / crypto / taint)
+    - ineffassign      # ineffectual assignments
+    - dupl             # copy‑paste detector
+    - unparam          # dead parameters
+    - goheader         # licence headers in every file
+  disable:
+    - gochecknoglobals
+    - gochecknoinits
+
+  exclusions:
+    presets:
+      - comments
+      - std-error-handling
+      - common-false-positives
+    warn-unused: true
+
+  settings:
+    revive:
+      confidence: 0.8
+      severity: warning
+      ignoreGeneratedHeader: true
+      rules:
+        - name: unused-parameter
+          severity: error
+    gosec:
+      excludes:
+        - G307
+    lll:
+      line-length: 120
+      tab-width: 4
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes: github.com/SamyRai/bank-data
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  exclude-rules:
+    - linters:
+        - errcheck
+      text: "CloseQuietly"
+
+output:
+  path-mode: abs
+  formats:
+    text:
+      colors: true
+
+run:
+  relative-path-mode: gomod
+  concurrency: 4
+  timeout: 5m
+  new: true
+  new-from-merge-base: main
+  tests: true
+  fix: false
+
+severity:
+  default: error
