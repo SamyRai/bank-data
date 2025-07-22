@@ -4,8 +4,10 @@ package iban
 import (
 	"strings"
 
+	bicmap "github.com/SamyRai/bank-data/internal/bic/map"
 	"github.com/SamyRai/bank-data/internal/countrymeta"
 	"github.com/SamyRai/bank-data/internal/log"
+	"github.com/SamyRai/bank-data/pkg/bank"
 	"github.com/SamyRai/bank-data/pkg/iban"
 )
 
@@ -71,6 +73,18 @@ func (p *parser) Parse(ibanStr string) (*iban.IBANInfo, error) {
 	}, nil
 }
 
+// EnrichWithBankInfo enriches a parsed IBANInfo with BankInfo using the provided mapping.
+func (p *parser) EnrichWithBankInfo(info *iban.IBANInfo, bicMap bicmap.BankBICMap) (*bank.BankInfo, error) {
+	if info == nil {
+		return nil, ErrNilIBANInfo
+	}
+	bankInfo, ok := bicMap.LookupBankInfo(info.CountryCode, info.BankCode)
+	if !ok {
+		return nil, ErrBankInfoNotFound
+	}
+	return bankInfo, nil
+}
+
 // detector implements the iban.Detector interface.
 type detector struct{}
 
@@ -130,3 +144,9 @@ func buildIBANStructureString(meta countrymeta.Meta) string {
 	}
 	return structure
 }
+
+// ErrNilIBANInfo is returned if IBANInfo is nil.
+var ErrNilIBANInfo = &iban.IBANError{Code: "nil_iban_info", Message: "IBANInfo is nil"}
+
+// ErrBankInfoNotFound is returned if no bank info is found for the IBAN.
+var ErrBankInfoNotFound = &iban.IBANError{Code: "bank_info_not_found", Message: "No bank info found for IBAN"}

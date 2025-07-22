@@ -2,6 +2,8 @@
 package iban
 
 import (
+	bicmap "github.com/SamyRai/bank-data/internal/bic/map"
+	"github.com/SamyRai/bank-data/pkg/bank"
 	"github.com/SamyRai/bank-data/pkg/validation"
 )
 
@@ -124,6 +126,24 @@ func (s *Service) Parse(ibanStr string) (*IBANInfo, error) {
 func (s *Service) Detect(ibanStr string) (*IBANStructure, error) {
 	return s.Detector.Detect(ibanStr)
 }
+
+// EnrichWithBankInfo looks up and attaches BankInfo to a parsed IBANInfo using the provided mapping.
+func EnrichWithBankInfo(info *IBANInfo, bicMap bicmap.BankBICMap) (*bank.BankInfo, error) {
+	if info == nil {
+		return nil, ErrNilIBANInfo
+	}
+	bankInfo, ok := bicMap.LookupBankInfo(info.CountryCode, info.BankCode)
+	if !ok {
+		return nil, ErrBankInfoNotFound
+	}
+	return bankInfo, nil
+}
+
+// ErrNilIBANInfo is returned if IBANInfo is nil.
+var ErrNilIBANInfo = &IBANError{Code: "nil_iban_info", Message: "IBANInfo is nil"}
+
+// ErrBankInfoNotFound is returned if no bank info is found for the IBAN.
+var ErrBankInfoNotFound = &IBANError{Code: "bank_info_not_found", Message: "No bank info found for IBAN"}
 
 // Example usage:
 //

@@ -8,6 +8,11 @@ type Validator[T any, R any] interface {
 	Validate(input T) R
 }
 
+// CrossFieldValidator is an interface for validating relationships between multiple fields or conditional rules.
+type CrossFieldValidator[T any, R any] interface {
+	ValidateFields(input T) R
+}
+
 // ValidationResult is a standard result type for all validators.
 type ValidationResult struct {
 	Input   any            // The input value validated

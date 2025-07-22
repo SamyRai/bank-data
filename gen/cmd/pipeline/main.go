@@ -18,7 +18,7 @@ func main() {
 
 func run() error {
 	// Prefer local iban-registry.txt if it exists in project root
-	const localFile = "iban-registry.txt"
+	const localFile = "datasets/iban-registry.txt"
 	if _, err := os.Stat(localFile); err == nil {
 		log.Info("Using local IBAN registry file", log.Fields{"file": localFile})
 		code, err := ibanmeta.GenerateRegistry(localFile)
