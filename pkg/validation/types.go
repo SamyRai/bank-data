@@ -10,10 +10,10 @@ type Validator[T any, R any] interface {
 
 // ValidationResult is a standard result type for all validators.
 type ValidationResult struct {
-	Input   any
-	Valid   bool
-	Error   error
-	Details map[string]any
+	Input   any            // The input value validated
+	Valid   bool           // Whether the input is valid
+	Error   error          // Error if validation failed
+	Details map[string]any // Additional details about validation
 }
 
 // ValidationRegistry allows registration and lookup of multiple validators by name.
@@ -22,18 +22,21 @@ type ValidationRegistry struct {
 	mu         sync.RWMutex
 }
 
+// NewValidationRegistry creates a new ValidationRegistry instance.
 func NewValidationRegistry() *ValidationRegistry {
 	return &ValidationRegistry{
 		validators: make(map[string]any),
 	}
 }
 
+// Register adds a validator to the registry under the given name.
 func (r *ValidationRegistry) Register(name string, v any) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.validators[name] = v
 }
 
+// Get retrieves a validator by name from the registry.
 func (r *ValidationRegistry) Get(name string) any {
 	r.mu.RLock()
 	defer r.mu.RUnlock()

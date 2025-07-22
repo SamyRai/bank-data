@@ -63,13 +63,14 @@ This document outlines potential future features and improvements for the `bank-
 - [x] Add support for more IBAN countries and structures (high, 2d)
 - [x] Improve error types and messages (medium, 1d)
 - [x] Add logging and monitoring (medium, 1d)
-- [ ] Optimize performance for large-scale validation (low, 2d)
-- [ ] Implement extensible, interface-driven validation system (high, 3d)
-- [ ] Add comprehensive unit and benchmark tests for validators (high, 2d)
+- [x] Optimize performance for large-scale validation (low, 2d)
+- [x] Implement extensible, interface-driven validation system (high, 3d)
+- [x] Add comprehensive unit and benchmark tests for validators (high, 2d)
 - [ ] Document all public APIs and validation rules (medium, 1d)
 - [ ] Add cross-field and conditional validation support (medium, 2d)
 - [ ] Support for internationalized error messages (low, 2d)
 - [ ] Integrate validation with API and database layers (medium, 2d)
+- [ ] Regularly review and maintain test coverage (medium, ongoing)
 
 ---
 

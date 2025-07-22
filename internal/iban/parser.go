@@ -9,15 +9,15 @@ import (
 	"github.com/SamyRai/bank-data/pkg/iban"
 )
 
-// parser implements the iban.Parser interface.
+// parser implements the iban.Parser interface for IBAN parsing.
 type parser struct{}
 
-// NewParser returns a new IBAN Parser.
+// NewParser returns a new IBAN Parser implementing the Parser interface.
 func NewParser() iban.Parser {
 	return &parser{}
 }
 
-// Parse extracts IBANInfo from the given IBAN string.
+// Parse extracts IBANInfo from the given IBAN string. Returns IBANInfo and error if parsing fails.
 func (p *parser) Parse(ibanStr string) (*iban.IBANInfo, error) {
 	ibanStrNorm := strings.ToUpper(strings.ReplaceAll(ibanStr, " ", ""))
 	log.Debug("Parsing IBAN", log.Fields{"iban": ibanStrNorm, "operation": "parse"})

@@ -10,15 +10,15 @@ import (
 	"github.com/SamyRai/bank-data/pkg/iban"
 )
 
-// validator implements the iban.Validator interface.
+// validator implements the iban.Validator interface for IBAN validation.
 type validator struct{}
 
-// NewValidator returns a new IBAN Validator.
+// NewValidator returns a new IBAN Validator implementing the Validator interface.
 func NewValidator() iban.Validator {
 	return &validator{}
 }
 
-// Validate checks if the IBAN is valid (format and checksum).
+// Validate checks if the IBAN is valid (format and checksum). Returns an error if invalid, or nil if valid.
 func (v *validator) Validate(ibanStr string) error {
 	ibanStrNorm := strings.ToUpper(strings.ReplaceAll(ibanStr, " ", ""))
 	log.Debug("Validating IBAN", log.Fields{"iban": ibanStrNorm, "operation": "validate"})

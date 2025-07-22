@@ -1,32 +1,70 @@
 # bank-data
 
-A Go (Golang) package for financial and banking data processing, starting with IBAN validation, parsing, and detection.
+A Go package for robust IBAN validation, parsing, and structure detection. Designed with clean architecture, SOLID principles, and extensibility in mind for future banking and financial data types.
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/SamyRai/bank-data.svg)](https://pkg.go.dev/github.com/SamyRai/bank-data)
 [![Test & Coverage](https://github.com/SamyRai/bank-data/actions/workflows/test.yml/badge.svg)](https://github.com/SamyRai/bank-data/actions/workflows/test.yml)
 [![Lint](https://github.com/SamyRai/bank-data/actions/workflows/lint.yml/badge.svg)](https://github.com/SamyRai/bank-data/actions/workflows/lint.yml)
 
+## Installation
+
+```sh
+go get github.com/SamyRai/bank-data
+```
+
+## Quick Start
+
+```go
+import (
+    "github.com/SamyRai/bank-data/pkg/iban"
+    internal "github.com/SamyRai/bank-data/internal/iban"
+)
+
+service := iban.NewService(
+    internal.NewValidator(),
+    internal.NewParser(),
+    internal.NewDetector(),
+    nil, // or provide a custom *validation.ValidationRegistry
+)
+
+err := service.Validate("DE89370400440532013000")
+if err != nil {
+    // handle invalid IBAN
+}
+```
+
 ## Features
 
-- IBAN validation (format and checksum)
-- IBAN parsing (extract country, bank code, account number, etc.)
-- IBAN structure detection (country, length, structure)
+- **IBAN Validation**: Format and checksum validation for a wide range of countries.
+- **IBAN Parsing**: Extracts country code, bank code, account number, and more.
+- **IBAN Structure Detection**: Identifies country, length, and structure of IBANs.
+- **Typed Error Handling**: Domain-specific, typed errors for all validation outcomes.
+- **Logging**: Structured logging for validation and parsing events.
+- **Batch and Fuzz Testing**: High test coverage, including edge cases and fuzzing.
 
-## Structure
+## Project Structure
 
-- `pkg/iban`: Public interfaces and types
-- `internal/iban`: Implementations and tests
-
-## Usage
-
-Import the interfaces from `pkg/iban` and use the implementations from `internal/iban`.
+- `pkg/iban`: Public interfaces, types, and the main service API (IBAN-specific).
+- `internal/iban`: Implementations of IBAN validation, parsing, and detection.
+- `internal/validation`: Shared validation types and registry (for future extensibility).
+- `testdata/`: Test vectors for IBAN validation.
 
 ## Testing
+
+Run all tests (including fuzz and table-driven tests):
 
 ```sh
 go test ./...
 ```
 
-## TODO
+## Roadmap & TODOs
 
-See [TODO.md](TODO.md)
+See [FUTURE_FEATURES.md](FUTURE_FEATURES.md) and [TODO.md](TODO.md) for planned features, progress tracking, and priorities.
+
+## Contributing
+
+Contributions are welcome! Please see the documentation and TODOs for guidance on project structure and priorities.
+
+## License
+
+[MIT License](LICENSE) (add this file if not present)

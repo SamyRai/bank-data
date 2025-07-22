@@ -1,41 +1,50 @@
 // Package iban provides the public API for IBAN validation, parsing, and detection.
 package iban
 
-// IBANInfo holds parsed IBAN details.
+import (
+	"github.com/SamyRai/bank-data/pkg/validation"
+)
+
+// IBANInfo holds parsed IBAN details such as country code, bank code, account number, and check digits.
 type IBANInfo struct {
-	CountryCode   string
-	BankCode      string
-	BranchCode    string
-	AccountNumber string
-	CheckDigits   string
-	Raw           string
+	CountryCode   string // ISO country code (2 letters)
+	BankCode      string // Bank identifier (country-specific)
+	BranchCode    string // Branch identifier (if applicable)
+	AccountNumber string // Account number (country-specific)
+	CheckDigits   string // IBAN check digits (2 digits)
+	Raw           string // Original normalized IBAN string
 }
 
 // IBANStructure holds metadata about IBAN format for a country.
 type IBANStructure struct {
-	CountryCode string
-	Length      int
-	Structure   string // e.g. "CCKKBBBBBBBBCCCCCCCCCC"
+	CountryCode string // ISO country code
+	Length      int    // IBAN length for the country
+	Structure   string // Structure string (e.g. "CCKKBBBBBBBBCCCCCCCCCC")
 }
 
 // IBANErrorCode defines error codes for IBAN operations.
 type IBANErrorCode string
 
 const (
-	ErrCodeInvalidChars       IBANErrorCode = "invalid_chars"
-	ErrCodeWrongLength        IBANErrorCode = "wrong_length"
-	ErrCodeChecksum           IBANErrorCode = "checksum_failed"
+	// ErrCodeInvalidChars indicates invalid characters in the IBAN.
+	ErrCodeInvalidChars IBANErrorCode = "invalid_chars"
+	// ErrCodeWrongLength indicates the IBAN has the wrong length.
+	ErrCodeWrongLength IBANErrorCode = "wrong_length"
+	// ErrCodeChecksum indicates a failed checksum validation.
+	ErrCodeChecksum IBANErrorCode = "checksum_failed"
+	// ErrCodeUnsupportedCountry indicates the country is not supported.
 	ErrCodeUnsupportedCountry IBANErrorCode = "unsupported_country"
 )
 
 // IBANError provides structured error information for IBAN operations.
 type IBANError struct {
 	Code    IBANErrorCode // Machine-readable error code
-	Field   string        // Optional: field or aspect (e.g., "country", "length", "checksum")
+	Field   string        // Field or aspect (e.g., "country", "length", "checksum")
 	Message string        // Human-readable error message
-	Value   string        // Optional: the value that caused the error
+	Value   string        // The value that caused the error
 }
 
+// Error returns the error message for IBANError.
 func (e *IBANError) Error() string {
 	if e.Field != "" {
 		return e.Field + ": " + e.Message
@@ -43,7 +52,7 @@ func (e *IBANError) Error() string {
 	return e.Message
 }
 
-// NewIBANError constructs a new IBANError.
+// NewIBANError constructs a new IBANError with the given code, field, message, and value.
 func NewIBANError(code IBANErrorCode, field, message, value string) *IBANError {
 	return &IBANError{
 		Code:    code,
@@ -55,41 +64,72 @@ func NewIBANError(code IBANErrorCode, field, message, value string) *IBANError {
 
 // Public, typed errors for all major failure modes.
 var (
-	ErrInvalidChars       = NewIBANError(ErrCodeInvalidChars, "characters", "IBAN contains invalid characters (only A-Z, 0-9 allowed)", "")
-	ErrWrongLength        = NewIBANError(ErrCodeWrongLength, "length", "IBAN has wrong length for country or is too short", "")
-	ErrChecksum           = NewIBANError(ErrCodeChecksum, "checksum", "IBAN checksum validation failed", "")
+	// ErrInvalidChars is returned when the IBAN contains invalid characters.
+	ErrInvalidChars = NewIBANError(ErrCodeInvalidChars, "characters", "IBAN contains invalid characters (only A-Z, 0-9 allowed)", "")
+	// ErrWrongLength is returned when the IBAN has the wrong length for the country or is too short.
+	ErrWrongLength = NewIBANError(ErrCodeWrongLength, "length", "IBAN has wrong length for country or is too short", "")
+	// ErrChecksum is returned when the IBAN checksum validation fails.
+	ErrChecksum = NewIBANError(ErrCodeChecksum, "checksum", "IBAN checksum validation failed", "")
+	// ErrUnsupportedCountry is returned when the IBAN country code is not supported.
 	ErrUnsupportedCountry = NewIBANError(ErrCodeUnsupportedCountry, "country", "IBAN country code is not supported", "")
 )
 
-// Service is the main entry point for IBAN operations.
+// Service is the main entry point for IBAN operations. It provides validation, parsing, and structure detection.
 type Service struct {
 	Validator Validator
 	Parser    Parser
 	Detector  Detector
+	Registry  *validation.ValidationRegistry // For extensible, tag-based validation
 }
 
-// NewService constructs a Service with the provided implementations.
-func NewService(v Validator, p Parser, d Detector) *Service {
+// NewService constructs a Service with the provided Validator, Parser, Detector, and optional ValidationRegistry.
+// If reg is nil, a new default registry is created.
+func NewService(v Validator, p Parser, d Detector, reg *validation.ValidationRegistry) *Service {
+	if reg == nil {
+		reg = validation.NewValidationRegistry()
+	}
 	return &Service{
 		Validator: v,
 		Parser:    p,
 		Detector:  d,
+		Registry:  reg,
 	}
 }
 
-// Validate checks if the IBAN is valid (format and checksum).
+// Validate checks if the IBAN is valid (format and checksum). Returns an error if invalid, or nil if valid.
 func (s *Service) Validate(ibanStr string) error {
 	return s.Validator.Validate(ibanStr)
 }
 
-// Parse extracts IBANInfo from the given IBAN string.
+// ValidateByTag validates input using a registered validator by tag (e.g., "iban", "bic").
+// Returns a ValidationResult and error if the tag is not found or validation fails.
+func (s *Service) ValidateByTag(tag string, input string) (validation.ValidationResult, error) {
+	v := s.Registry.Get(tag)
+	if v == nil {
+		return validation.ValidationResult{Input: input, Valid: false, Error: ErrUnsupportedCountry}, ErrUnsupportedCountry
+	}
+	// Try to use the generic Validator interface
+	if validator, ok := v.(validation.Validator[string, validation.ValidationResult]); ok {
+		return validator.Validate(input), nil
+	}
+	return validation.ValidationResult{Input: input, Valid: false, Error: ErrUnsupportedCountry}, ErrUnsupportedCountry
+}
+
+// Parse extracts IBANInfo from the given IBAN string. Returns IBANInfo and error if parsing fails.
 func (s *Service) Parse(ibanStr string) (*IBANInfo, error) {
 	return s.Parser.Parse(ibanStr)
 }
 
-// Detect returns IBAN structure metadata for a given IBAN string.
+// Detect returns IBANStructure metadata for a given IBAN string. Returns IBANStructure and error if detection fails.
 func (s *Service) Detect(ibanStr string) (*IBANStructure, error) {
 	return s.Detector.Detect(ibanStr)
 }
 
-// (Batch validation removed from public Service API. Use internal/validation for batch operations.)
+// Example usage:
+//
+//  reg := validation.NewValidationRegistry()
+//  reg.Register("iban", &internalvalidation.IBANBatchValidator{})
+//  svc := iban.NewService(validator, parser, detector, reg)
+//  result, err := svc.ValidateByTag("iban", "DE89370400440532013000")
+//
+// This allows users to register and use custom validators by tag, supporting extensibility and interface-driven design.

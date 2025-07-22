@@ -19,6 +19,7 @@ func FuzzIBANValidate(f *testing.F) {
 		internal.NewValidator(),
 		internal.NewParser(),
 		internal.NewDetector(),
+		nil, // pass nil for registry
 	)
 	f.Fuzz(func(_ *testing.T, s string) {
 		_ = service.Validate(s) // Should not panic or crash

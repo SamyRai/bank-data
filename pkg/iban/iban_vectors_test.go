@@ -25,6 +25,7 @@ func TestIBANVectors(t *testing.T) {
 		internal.NewValidator(),
 		internal.NewParser(),
 		internal.NewDetector(),
+		nil, // pass nil for registry
 	)
 	for scanner.Scan() {
 		line := scanner.Text()
