@@ -34,7 +34,8 @@ vendor/
 *.pb.gw.go
 
 # Test data
-/testdata/
+# /testdata/   # Allow testdata for test vectors
+!/testdata/iban_test_vectors.txt
 
 # Local config
 .env

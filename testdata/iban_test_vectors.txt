@@ -1,0 +1,13 @@
+# IBAN Test Vectors
+# Format: IBAN,Valid (1/0),Country,Comment
+DE89370400440532013000,1,DE,Official example
+GB82WEST12345698765432,1,GB,Official example
+FR1420041010050500013M02606,1,FR,Official example
+ES9121000418450200051332,1,ES,Official example
+IT60X0542811101000000123456,1,IT,Official example
+NL91ABNA0417164300,1,NL,Official example
+BE68539007547034,1,BE,Official example
+AT611904300234573201,1,AT,Official example
+CH9300762011623852957,1,CH,Official example
+SE4550000000058398257466,1,SE,Official example
+# Add more vectors and edge cases as needed
