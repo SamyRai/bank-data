@@ -2,11 +2,10 @@ package iban_test
 
 import (
 	"bufio"
-	"math/rand"
+	"crypto/rand"
 	"os"
 	"strings"
 	"testing"
-	"time"
 
 	internal "github.com/SamyRai/bank-data/internal/iban"
 	"github.com/SamyRai/bank-data/pkg/iban"
@@ -34,23 +33,32 @@ func FuzzIBANValidate(f *testing.F) {
 				f.Add(parts[0])
 			}
 		}
-		file.Close()
+		if err := file.Close(); err != nil {
+			// TODO: log error closing iban_test_vectors.txt, priority: low, effort: 1m
+		}
 	}
 
-	// Add random fuzz cases
-	rand.Seed(time.Now().UnixNano())
+	// Add random fuzz cases using crypto/rand
 	for i := 0; i < 100; i++ {
-		length := rand.Intn(40) // up to 40 chars
+		length := 0
+		b := make([]byte, 1)
+		if _, err := rand.Read(b); err == nil {
+			length = int(b[0]) % 40 // up to 40 chars
+		}
 		iban := make([]byte, length)
 		for j := range iban {
-			// Random A-Z, 0-9, and some invalid chars
-			c := rand.Intn(40)
-			if c < 26 {
-				iban[j] = byte('A' + c)
-			} else if c < 36 {
-				iban[j] = byte('0' + c - 26)
+			b := make([]byte, 1)
+			if _, err := rand.Read(b); err == nil {
+				c := int(b[0]) % 40
+				if c < 26 {
+					iban[j] = byte('A' + c)
+				} else if c < 36 {
+					iban[j] = byte('0' + c - 26)
+				} else {
+					iban[j] = byte('!') // invalid
+				}
 			} else {
-				iban[j] = byte('!') // invalid
+				iban[j] = 'X'
 			}
 		}
 		f.Add(string(iban))
@@ -62,7 +70,7 @@ func FuzzIBANValidate(f *testing.F) {
 		internal.NewDetector(),
 		nil, // pass nil for registry
 	)
-	f.Fuzz(func(t *testing.T, s string) {
+	f.Fuzz(func(_ *testing.T, s string) {
 		_ = service.Validate(s) // Should not panic or crash
 	})
 }
