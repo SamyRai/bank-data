@@ -1,0 +1,17 @@
+# BIC Test Vectors
+# Format: BIC,Valid (1/0),Country,Comment
+DEUTDEFF,1,DE,Valid 8-char BIC, active
+DEUTDEFF500,1,DE,Valid 11-char BIC, active
+NEDSZAJJ,0,NL,Inactive BIC
+DEUTDEFF5,0,DE,Invalid length
+DEUTDEFFF0,0,DE,Invalid length (10)
+DEUTDEFGHJK,0,DE,Not in directory, valid format
+DEUTUS33,0,US,Invalid country code
+DEUTDEFF@#,0,DE,Invalid chars
+DEUTDE,0,DE,Too short
+DEUTDEFF1234,0,DE,Too long
+PBNKDEFF,1,DE,Valid BIC from map
+XXXXDEFF,0,DE,Bank code not in map
+PBNKDEFF1,0,DE,Invalid length (9)
+PBNKDEFFXXX,1,DE,Valid 11-char BIC from map (branch)
+PBNKDEFG,0,DE,Valid format, not in map or directory

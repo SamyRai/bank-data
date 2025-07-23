@@ -1,10 +1,20 @@
 # bank-data
 
-A Go package for robust IBAN validation, parsing, and structure detection. Designed with clean architecture, SOLID principles, and extensibility in mind for future banking and financial data types.
+A production-ready Go package for robust IBAN validation, parsing, and structure detection. Built with clean architecture, SOLID principles, and extensibility for future banking and financial data types.
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/SamyRai/bank-data.svg)](https://pkg.go.dev/github.com/SamyRai/bank-data)
 [![Test & Coverage](https://github.com/SamyRai/bank-data/actions/workflows/test.yml/badge.svg)](https://github.com/SamyRai/bank-data/actions/workflows/test.yml)
 [![Lint](https://github.com/SamyRai/bank-data/actions/workflows/lint.yml/badge.svg)](https://github.com/SamyRai/bank-data/actions/workflows/lint.yml)
+
+## Overview
+
+bank-data provides:
+
+- Secure, standards-compliant IBAN validation (format, length, MOD-97 checksum)
+- Country-specific parsing and enrichment (e.g., DE BLZ→BIC)
+- Typed error handling and structured logging
+- High test coverage (unit, fuzz, edge cases)
+- Extensible design for future banking data types
 
 ## Installation
 
@@ -13,6 +23,8 @@ go get github.com/SamyRai/bank-data
 ```
 
 ## Quick Start
+
+Basic validation:
 
 ```go
 import (
@@ -33,39 +45,61 @@ if err != nil {
 }
 ```
 
+Advanced usage (parsing, enrichment):
+
+```go
+info, err := service.Parse("DK5000400440116243") // Denmark example
+if err == nil {
+    fmt.Println("Bank code:", info.BankCode)
+    // Enrich with BIC lookup, etc.
+}
+```
+
 ## Features
 
-- **IBAN Validation**: Format and checksum validation for a wide range of countries.
-- **IBAN Parsing**: Extracts country code, bank code, account number, and more.
-- **IBAN Structure Detection**: Identifies country, length, and structure of IBANs.
-- **Typed Error Handling**: Domain-specific, typed errors for all validation outcomes.
-- **Logging**: Structured logging for validation and parsing events.
-- **Batch and Fuzz Testing**: High test coverage, including edge cases and fuzzing.
-- **Cross-Field and Conditional Validation**: Validate relationships between multiple fields (e.g., account and country) and support conditional rules. Easily register cross-field validators in the ValidationRegistry for use in the service layer or for custom business logic.
+- **IBAN Validation**: Format, length, and checksum for all major countries (including Denmark)
+- **IBAN Parsing**: Extracts country code, bank code, account number, and check digits
+- **Bank Directory Lookup**: Enriches parsed IBANs with BIC and bank name (DE, extensible)
+- **Typed Error Handling**: Domain-specific errors for all validation outcomes
+- **Structured Logging**: For validation and parsing events
+- **Batch & Fuzz Testing**: High coverage, edge cases, and fuzzing
+- **Extensible Validation**: Register custom validators for new data types
+
+## Supported Countries
+
+- All major EU/SEPA countries (DE, DK, FR, IT, ES, NL, BE, AT, CH, SE, etc.)
+- Denmark (DK) is fully supported and tested
+- Easily extensible via countrymeta.Registry
 
 ## Project Structure
 
-- `pkg/iban`: Public interfaces, types, and the main service API (IBAN-specific).
-- `internal/iban`: Implementations of IBAN validation, parsing, and detection.
-- `internal/validation`: Shared validation types and registry (for future extensibility).
-- `testdata/`: Test vectors for IBAN validation.
+- `pkg/iban`: Public interfaces, types, and main service API
+- `internal/iban`: Core validation, parsing, and detection logic
+- `internal/validation`: Shared validation types and registry
+- `testdata/`: Test vectors for IBAN validation
 
 ## Testing
 
-Run all tests (including fuzz and table-driven tests):
+Run all tests (unit, fuzz, edge cases):
 
 ```sh
 go test ./...
 ```
 
+## CI & Security
+
+- Automated tests, linting, security scans (GoSec, CodeQL, dependency review)
+- Multi-platform, multi-version CI via GitHub Actions
+- See `.github/workflows/` for details
+
 ## Roadmap & TODOs
 
-See [FUTURE_FEATURES.md](FUTURE_FEATURES.md) and [TODO.md](TODO.md) for planned features, progress tracking, and priorities.
+See [FUTURE_FEATURES.md](FUTURE_FEATURES.md) and [TODO.md](TODO.md) for planned features and progress tracking.
 
 ## Contributing
 
-Contributions are welcome! Please see the documentation and TODOs for guidance on project structure and priorities.
+Contributions are welcome! See documentation and TODOs for guidance on project structure and priorities.
 
 ## License
 
-[MIT License](LICENSE) (add this file if not present)
+This project is licensed under the [MIT License](LICENSE).
