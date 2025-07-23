@@ -128,7 +128,7 @@ func (s *Service) Detect(ibanStr string) (*IBANStructure, error) {
 }
 
 // EnrichWithBankInfo looks up and attaches BankInfo to a parsed IBANInfo using the provided mapping.
-func EnrichWithBankInfo(info *IBANInfo, bicMap bicmap.BankBICMap) (*bank.BankInfo, error) {
+func EnrichWithBankInfo(info *IBANInfo, bicMap bicmap.BankBICMap) (*bank.Info, error) {
 	if info == nil {
 		return nil, ErrNilIBANInfo
 	}

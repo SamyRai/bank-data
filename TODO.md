@@ -20,6 +20,8 @@
 - [ ] **Documentation and CI**
   - Add README, LICENSE, and CI config for multi-platform, multi-version testing
   - Priority: Medium | Effort: 0.5d
+- [x] **Remove redundant IBANRegistrySource abstraction in favor of general encoder/decoder**
+  - Priority: Low | Effort: 5m
 
 ---
 

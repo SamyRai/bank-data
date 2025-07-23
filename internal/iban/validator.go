@@ -70,7 +70,7 @@ func (v *validator) Validate(ibanStr string) error {
 }
 
 // ValidateAndBankInfo validates the IBAN and returns BankInfo if valid.
-func (v *validator) ValidateAndBankInfo(ibanStr string, bicMap bicmap.BankBICMap) (*bank.BankInfo, error) {
+func (v *validator) ValidateAndBankInfo(ibanStr string, bicMap bicmap.BankBICMap) (*bank.Info, error) {
 	ibanStrNorm := strings.ToUpper(strings.ReplaceAll(ibanStr, " ", ""))
 	if len(ibanStrNorm) < 4 {
 		return nil, iban.ErrWrongLength

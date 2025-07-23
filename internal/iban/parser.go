@@ -74,7 +74,7 @@ func (p *parser) Parse(ibanStr string) (*iban.IBANInfo, error) {
 }
 
 // EnrichWithBankInfo enriches a parsed IBANInfo with BankInfo using the provided mapping.
-func (p *parser) EnrichWithBankInfo(info *iban.IBANInfo, bicMap bicmap.BankBICMap) (*bank.BankInfo, error) {
+func (p *parser) EnrichWithBankInfo(info *iban.IBANInfo, bicMap bicmap.BankBICMap) (*bank.Info, error) {
 	if info == nil {
 		return nil, ErrNilIBANInfo
 	}

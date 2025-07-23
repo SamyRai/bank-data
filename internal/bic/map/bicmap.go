@@ -64,8 +64,8 @@ func (m BankBICMap) LookupBIC(country, bankCode string) (BankBICEntry, bool) {
 }
 
 // ToBankInfo converts a BankBICEntry to a global BankInfo entity.
-func (e BankBICEntry) ToBankInfo() *bank.BankInfo {
-	return &bank.BankInfo{
+func (e BankBICEntry) ToBankInfo() *bank.Info {
+	return &bank.Info{
 		CountryCode: e.Country,
 		BankCode:    e.BankCode,
 		BIC:         e.BIC,
@@ -74,7 +74,7 @@ func (e BankBICEntry) ToBankInfo() *bank.BankInfo {
 }
 
 // LookupBankInfo returns BankInfo for a given country and bank code.
-func (m BankBICMap) LookupBankInfo(country, bankCode string) (*bank.BankInfo, bool) {
+func (m BankBICMap) LookupBankInfo(country, bankCode string) (*bank.Info, bool) {
 	entry, ok := m.LookupBIC(country, bankCode)
 	if !ok {
 		return nil, false
