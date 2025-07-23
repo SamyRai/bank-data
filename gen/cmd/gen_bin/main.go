@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/SamyRai/bank-data/internal/bankdata"
 	bicmap "github.com/SamyRai/bank-data/internal/bic/map"
@@ -16,6 +17,9 @@ import (
 )
 
 func decodeAndPrint(input string, from, to, lines int) error {
+	if filepath.IsAbs(input) || strings.Contains(input, "..") {
+		return fmt.Errorf("invalid input file path: %s", input)
+	}
 	f, err := os.Open(input)
 	if err != nil {
 		return fmt.Errorf("failed to open input file: %w", err)
@@ -128,6 +132,10 @@ func main() {
 			return []byte(line), nil
 		})
 	case "iban":
+		if filepath.IsAbs(*input) || strings.Contains(*input, "..") {
+			fmt.Fprintf(os.Stderr, "invalid IBAN registry file path: %s\n", *input)
+			os.Exit(1)
+		}
 		f, err := os.Open(*input)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Failed to open IBAN registry: %v\n", err)

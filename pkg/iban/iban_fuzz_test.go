@@ -3,6 +3,7 @@ package iban_test
 import (
 	"bufio"
 	"crypto/rand"
+	"fmt"
 	"os"
 	"strings"
 	"testing"
@@ -34,6 +35,7 @@ func FuzzIBANValidate(f *testing.F) {
 			}
 		}
 		if err := file.Close(); err != nil {
+			fmt.Printf("error closing iban_test_vectors.txt: %v\n", err)
 			// TODO: log error closing iban_test_vectors.txt, priority: low, effort: 1m
 		}
 	}
