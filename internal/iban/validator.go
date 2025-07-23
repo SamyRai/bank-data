@@ -12,6 +12,9 @@ import (
 	"github.com/SamyRai/bank-data/pkg/iban"
 )
 
+// IBANMaxLength is the maximum allowed IBAN length per ISO 13616.
+const IBANMaxLength = 34
+
 // validator implements the iban.Validator interface for IBAN validation.
 type validator struct{}
 
@@ -23,7 +26,12 @@ func NewValidator() iban.Validator {
 // Validate checks if the IBAN is valid (format and checksum). Returns an error if invalid, or nil if valid.
 func (v *validator) Validate(ibanStr string) error {
 	ibanStrNorm := strings.ToUpper(strings.ReplaceAll(ibanStr, " ", ""))
-	log.Debug("Validating IBAN", log.Fields{"iban": ibanStrNorm, "operation": "validate"})
+	if len(ibanStrNorm) > IBANMaxLength {
+		err := *iban.ErrWrongLength
+		err.Value = ibanStr
+		log.Warn("IBAN validation failed: exceeds max length", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
+		return &err
+	}
 	if len(ibanStrNorm) < 4 {
 		err := *iban.ErrWrongLength
 		err.Value = ibanStr
@@ -72,6 +80,9 @@ func (v *validator) Validate(ibanStr string) error {
 // ValidateAndBankInfo validates the IBAN and returns BankInfo if valid.
 func (v *validator) ValidateAndBankInfo(ibanStr string, bicMap bicmap.BankBICMap) (*bank.Info, error) {
 	ibanStrNorm := strings.ToUpper(strings.ReplaceAll(ibanStr, " ", ""))
+	if len(ibanStrNorm) > IBANMaxLength {
+		return nil, iban.ErrWrongLength
+	}
 	if len(ibanStrNorm) < 4 {
 		return nil, iban.ErrWrongLength
 	}
@@ -100,7 +111,7 @@ func (v *validator) ValidateAndBankInfo(ibanStr string, bicMap bicmap.BankBICMap
 	return bankInfo, nil
 }
 
-// validateIBANChecksum implements the IBAN checksum validation algorithm using streaming MOD-97.
+// validateIBANChecksum implements the IBAN checksum validation algorithm using streaming MOD-97 and constant-time comparison.
 func validateIBANChecksum(ibanStr string) bool {
 	rearranged := ibanStr[4:] + ibanStr[:4]
 	rem := 0
@@ -116,5 +127,20 @@ func validateIBANChecksum(ibanStr string) bool {
 			return false
 		}
 	}
-	return rem == 1
+	// Constant-time comparison for security
+	return constantTimeEq(rem, 1)
 }
+
+// constantTimeEq returns true if a == b, in constant time.
+func constantTimeEq(a, b int) bool {
+	// TODO: Consider using crypto/subtle for even stricter constant-time guarantees. Priority: medium, Effort: 1h
+	return (a ^ b) == 0
+}
+
+// TestValidateIBANChecksum is an exported version for unit testing.
+func TestValidateIBANChecksum(ibanStr string) bool {
+	return validateIBANChecksum(ibanStr)
+}
+
+// TODO: Add more comprehensive unit tests for input length capping and constant-time check digit validation. Priority: high, Effort: 1h
+// TODO: Refactor error handling to use domain-specific error types everywhere. Priority: medium, Effort: 2h
