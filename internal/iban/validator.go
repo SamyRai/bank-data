@@ -21,10 +21,15 @@ func NewValidator() iban.Validator {
 	return &validator{}
 }
 
-// Validate checks if the IBAN is valid (format and checksum). Returns an error if invalid, or nil if valid.
+// Validate performs a comprehensive validation of an IBAN.
+// It checks for correct length, valid characters, supported country code,
+// country-specific format (using a regex), and checksum validity.
+// Returns a typed error if the IBAN is invalid, otherwise nil.
 func (v *validator) Validate(ibanStr string) error {
 	ibanStrNorm := strings.ToUpper(strings.ReplaceAll(ibanStr, " ", ""))
 	log.Debug("Validating IBAN", log.Fields{"iban": ibanStrNorm, "operation": "validate"})
+
+	// Basic checks for length and characters
 	if len(ibanStrNorm) < 4 {
 		err := *iban.ErrWrongLength
 		err.Value = ibanStr
@@ -37,6 +42,8 @@ func (v *validator) Validate(ibanStr string) error {
 		log.Warn("IBAN validation failed: invalid characters", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
 		return &err
 	}
+
+	// Country-specific validation
 	country := ibanStrNorm[:2]
 	meta, ok := countrymeta.Registry[country]
 	if !ok {
@@ -51,7 +58,8 @@ func (v *validator) Validate(ibanStr string) error {
 		log.Warn("IBAN validation failed: wrong length for country", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
 		return &err
 	}
-	// Regex validation using pre-compiled regex in meta.BBANRegex
+
+	// BBAN format validation using a pre-compiled regex
 	if meta.BBANRegex != nil {
 		bban := ibanStrNorm[4:]
 		if !meta.BBANRegex.MatchString(bban) {
@@ -61,12 +69,15 @@ func (v *validator) Validate(ibanStr string) error {
 			return &err
 		}
 	}
+
+	// Checksum validation
 	if !validateIBANChecksum(ibanStrNorm) {
 		err := *iban.ErrChecksum
 		err.Value = ibanStr
 		log.Warn("IBAN validation failed: checksum", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
 		return &err
 	}
+
 	log.Info("IBAN validated successfully", log.Fields{"iban": ibanStrNorm, "operation": "validate"})
 	return nil
 }

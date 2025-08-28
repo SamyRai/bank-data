@@ -44,7 +44,9 @@ func isValidISOCountryCode(code string) bool {
 	return ok
 }
 
-// validateBICSyntax checks length, format, and country code.
+// validateBICSyntax checks the basic syntax of a BIC.
+// It validates the length (8 or 11 characters), format (alphanumeric),
+// and ensures the country code corresponds to a valid ISO 3166-1 alpha-2 code.
 func validateBICSyntax(bic string) error {
 	bic = strings.ToUpper(strings.TrimSpace(bic))
 	if len(bic) != 8 && len(bic) != 11 {
@@ -60,7 +62,9 @@ func validateBICSyntax(bic string) error {
 	return nil
 }
 
-// validateBICSemantic checks mapping-based rules (e.g., bank code mapping).
+// validateBICSemantic performs semantic validation of a BIC.
+// It checks if the bank code in the BIC maps to a known bank in the provided bank code map.
+// This helps to ensure that the BIC belongs to a legitimate financial institution.
 func validateBICSemantic(bic string) error {
 	country := bic[4:6]
 	if bicmapData != nil {
@@ -78,7 +82,9 @@ func validateBICSemantic(bic string) error {
 	return nil
 }
 
-// validateBICDirectory checks directory presence and active status.
+// validateBICDirectory checks a BIC against a directory of known BICs.
+// If strict mode is enabled, the BIC must be present and active in the directory.
+// If strict mode is disabled, it only checks for inactive status if the BIC is found.
 func validateBICDirectory(bic string, strict bool) error {
 	meta, found := Directory[bic[:8]]
 	if strict {
@@ -96,9 +102,15 @@ func validateBICDirectory(bic string, strict bool) error {
 	return nil
 }
 
-// Validate checks BIC syntax, semantic, and directory status.
-// If strictWhitelist is true, only BICs present and active in Directory are valid.
-// If a country-specific bank code mapping is available, it is used for additional validation.
+// Validate performs a comprehensive validation of a BIC (SWIFT code).
+// It checks for syntactic correctness, semantic validity against a bank code map,
+// and presence and status in a directory of known BICs.
+//
+// The strictWhitelist parameter controls the directory validation behavior:
+//   - If true, the BIC must be present and active in the directory.
+//   - If false (default), the validation only fails if the BIC is found but is inactive.
+//
+// The function returns an error if the BIC is invalid, otherwise nil.
 func Validate(bic string, strictWhitelist ...bool) error {
 	bic = strings.ToUpper(strings.TrimSpace(bic))
 	if err := validateBICSyntax(bic); err != nil {
@@ -111,7 +123,8 @@ func Validate(bic string, strictWhitelist ...bool) error {
 	if err := validateBICDirectory(bic, strict); err != nil {
 		return err
 	}
-	// If not found in mapping or directory, reject
+	// If not found in mapping or directory, reject.
+	// This ensures that we only accept BICs that are known to us.
 	foundInMapping := false
 	if bicmapData != nil {
 		bankCode := bic[:4]

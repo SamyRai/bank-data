@@ -76,7 +76,9 @@ var (
 	ErrUnsupportedCountry = NewIBANError(ErrCodeUnsupportedCountry, "country", "IBAN country code is not supported", "")
 )
 
-// Service is the main entry point for IBAN operations. It provides validation, parsing, and structure detection.
+// Service is the main entry point for all IBAN-related operations.
+// It encapsulates the core logic for validation, parsing, and structure detection,
+// acting as a facade for the underlying implementation details.
 type Service struct {
 	Validator Validator
 	Parser    Parser
@@ -84,8 +86,9 @@ type Service struct {
 	Registry  *validation.ValidationRegistry // For extensible, tag-based validation
 }
 
-// NewService constructs a Service with the provided Validator, Parser, Detector, and optional ValidationRegistry.
-// If reg is nil, a new default registry is created.
+// NewService creates a new IBAN service with the necessary dependencies.
+// It takes a validator, parser, and detector, and an optional validation registry.
+// If the registry is nil, a new one is created. This allows for a flexible and testable setup.
 func NewService(v Validator, p Parser, d Detector, reg *validation.ValidationRegistry) *Service {
 	if reg == nil {
 		reg = validation.NewValidationRegistry()
@@ -103,14 +106,19 @@ func (s *Service) Validate(ibanStr string) error {
 	return s.Validator.Validate(ibanStr)
 }
 
-// ValidateByTag validates input using a registered validator by tag (e.g., "iban", "bic").
-// Returns a ValidationResult and error if the tag is not found or validation fails.
+// ValidateByTag provides a generic way to validate different types of data (e.g., IBAN, BIC)
+// using a tag-based registry system. This makes the service extensible to new validation types
+// without changing its core structure.
+//
+// It looks up a validator by its registered tag and, if found, executes it.
+// Returns a ValidationResult and an error if the tag is not supported or validation fails.
 func (s *Service) ValidateByTag(tag string, input string) (validation.ValidationResult, error) {
 	v := s.Registry.Get(tag)
 	if v == nil {
 		return validation.ValidationResult{Input: input, Valid: false, Error: ErrUnsupportedCountry}, ErrUnsupportedCountry
 	}
-	// Try to use the generic Validator interface
+
+	// Type-assert to the generic Validator interface and execute.
 	if validator, ok := v.(validation.Validator[string, validation.ValidationResult]); ok {
 		return validator.Validate(input), nil
 	}
