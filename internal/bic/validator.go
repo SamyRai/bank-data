@@ -27,6 +27,7 @@ var Directory = map[string]Meta{
 	// Example entries; production version should load from SWIFTRef
 	"DEUTDEFF": {Active: true},
 	"NEDSZAJJ": {Active: false, InactiveSince: "2022-01-01"},
+	"DABADEBB": {Active: false, InactiveSince: "2010-12-31"},
 }
 
 // Errors for typed checking (future-friendly)

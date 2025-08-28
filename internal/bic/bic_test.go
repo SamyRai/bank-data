@@ -22,6 +22,7 @@ func TestValidate(t *testing.T) {
 		{"DEUTDEFF@#", false, "invalid chars"},
 		{"DEUTDE", false, "too short"},
 		{"DEUTDEFF1234", false, "too long"},
+		{"DABADEBB", false, "inactive BIC in directory"},
 	}
 	for _, c := range cases {
 		err := Validate(c.bic)
