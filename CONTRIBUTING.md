@@ -82,6 +82,14 @@ We also use `golangci-lint` for linting. You can run `make lint` to check your c
 
 Please add tests for any new features or bug fixes. We use the built-in Go testing framework.
 
+### Code Generation
+
+This project uses `go:generate` to automate the creation of the IBAN country registry. If you make changes to the generator in the `gen` directory, you will need to run the following command to update the registry:
+
+```sh
+go generate ./...
+```
+
 ### Issues
 
 If you find a bug or have a feature request, please [open an issue](https://github.com/SamyRai/bank-data/issues/new). Please provide as much information as possible, including the version of Go you are using, the version of the library you are using, and a code sample that reproduces the issue.
