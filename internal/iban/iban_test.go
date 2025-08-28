@@ -3,7 +3,9 @@ package iban_test
 import (
 	"testing"
 
+	"github.com/SamyRai/bank-data/internal/bic/map"
 	ibanimpl "github.com/SamyRai/bank-data/internal/iban"
+	"github.com/SamyRai/bank-data/pkg/iban"
 )
 
 func TestValidator_Validate(t *testing.T) {
@@ -49,5 +51,69 @@ func TestDetector_Detect(t *testing.T) {
 	}
 	if structure.CountryCode != "DE" || structure.Length != 22 {
 		t.Errorf("Detect() got = %+v", structure)
+	}
+}
+
+func TestValidator_ValidateAndBankInfo(t *testing.T) {
+	validator := ibanimpl.NewValidator()
+	mockBicMap := bicmap.BankBICMap{
+		"DE": {
+			"37040044": bicmap.BankBICEntry{
+				BIC:      "COBADEFFXXX",
+				BankName: "COMMERZBANK",
+				Country:  "DE",
+			},
+		},
+	}
+
+	tests := []struct {
+		name      string
+		iban      string
+		bicMap    bicmap.BankBICMap
+		wantBic   string
+		wantErr   bool
+		errType   error
+	}{
+		{
+			name:      "valid IBAN and bank info found",
+			iban:      "DE89370400440532013000",
+			bicMap:    mockBicMap,
+			wantBic:   "COBADEFFXXX",
+			wantErr:   false,
+			errType:   nil,
+		},
+		{
+			name:      "valid IBAN but bank info not found",
+			iban:      "DE89370400440532013000",
+			bicMap:    bicmap.BankBICMap{},
+			wantErr:   true,
+			errType:   iban.ErrBankInfoNotFound,
+		},
+		{
+			name:      "invalid IBAN",
+			iban:      "invalid-iban",
+			bicMap:    mockBicMap,
+			wantErr:   true,
+			errType:   iban.ErrInvalidChars,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := validator.ValidateAndBankInfo(tt.iban, tt.bicMap)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ValidateAndBankInfo() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if tt.wantErr {
+				if err.Error() != tt.errType.Error() {
+					t.Errorf("ValidateAndBankInfo() error = %v, want %v", err, tt.errType)
+				}
+			} else {
+				if got.BIC != tt.wantBic {
+					t.Errorf("ValidateAndBankInfo() BIC = %v, want %v", got.BIC, tt.wantBic)
+				}
+			}
+		})
 	}
 }

@@ -113,7 +113,7 @@ func (d *detector) Detect(ibanStr string) (*iban.IBANStructure, error) {
 	}
 	structure := buildIBANStructureString(meta)
 	return &iban.IBANStructure{
-		CountryCode: meta.Country,
+		CountryCode: meta.CountryCode,
 		Length:      meta.Length,
 		Structure:   structure, // See structureLegend for meaning
 	}, nil
@@ -124,10 +124,10 @@ func (d *detector) Detect(ibanStr string) (*iban.IBANStructure, error) {
 //
 //	D/E = country code, k = check digits, b = bank code, c = account number
 //	Structure legend: C=country, K=check digits, B=bank code, A=account number, X=other/unknown
-func buildIBANStructureString(meta countrymeta.Meta) string {
+func buildIBANStructureString(meta countrymeta.IBANMeta) string {
 	// Start with country code and check digits
 	structure := ""
-	if len(meta.Country) == 2 {
+	if len(meta.CountryCode) == 2 {
 		structure += "CC" // C = country code
 	}
 	structure += "KK" // K = check digits

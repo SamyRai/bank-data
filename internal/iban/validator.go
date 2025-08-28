@@ -2,6 +2,7 @@
 package iban
 
 import (
+	"crypto/subtle"
 	"regexp"
 	"strings"
 
@@ -50,9 +51,10 @@ func (v *validator) Validate(ibanStr string) error {
 		log.Warn("IBAN validation failed: wrong length for country", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
 		return &err
 	}
-	// Regex validation using pre-compiled regex in meta.Regex
-	if meta.Regex != nil {
-		if !meta.Regex.MatchString(ibanStrNorm) {
+	// Regex validation using pre-compiled regex in meta.BBANRegex
+	if meta.BBANRegex != nil {
+		bban := ibanStrNorm[4:]
+		if !meta.BBANRegex.MatchString(bban) {
 			err := *iban.ErrInvalidFormat
 			err.Value = ibanStr
 			log.Warn("IBAN validation failed: regex", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
@@ -74,6 +76,9 @@ func (v *validator) ValidateAndBankInfo(ibanStr string, bicMap bicmap.BankBICMap
 	ibanStrNorm := strings.ToUpper(strings.ReplaceAll(ibanStr, " ", ""))
 	if len(ibanStrNorm) < 4 {
 		return nil, iban.ErrWrongLength
+	}
+	if !regexp.MustCompile(`^[A-Z0-9]+$`).MatchString(ibanStrNorm) {
+		return nil, iban.ErrInvalidChars
 	}
 	country := ibanStrNorm[:2]
 	meta, ok := countrymeta.Registry[country]
@@ -116,5 +121,6 @@ func validateIBANChecksum(ibanStr string) bool {
 			return false
 		}
 	}
-	return rem == 1
+	// Constant-time comparison to prevent timing attacks
+	return subtle.ConstantTimeEq(int32(rem), 1) == 1
 }
