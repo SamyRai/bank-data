@@ -2,7 +2,7 @@
 package iban
 
 import (
-	"github.com/SamyRai/bank-data/internal/bic/map"
+	bicmap "github.com/SamyRai/bank-data/internal/bic/map"
 	"github.com/SamyRai/bank-data/pkg/bank"
 )
 
@@ -17,6 +17,7 @@ type Validator interface {
 // Parse returns IBANInfo and error if parsing fails.
 type Parser interface {
 	Parse(iban string) (*IBANInfo, error)
+	EnrichWithBankInfo(info *IBANInfo, bicMap bicmap.BankBICMap) (*bank.BankInfo, error)
 }
 
 // Detector defines the interface for IBAN country and structure detection.

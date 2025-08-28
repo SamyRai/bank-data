@@ -30,6 +30,31 @@ func TestValidator_Validate(t *testing.T) {
 	}
 }
 
+func TestParser_EnrichWithBankInfo(t *testing.T) {
+	parser := ibanimpl.NewParser()
+	info, err := parser.Parse("DE89370400440532013000")
+	if err != nil {
+		t.Fatalf("Parse() error = %v", err)
+	}
+	mockBicMap := bicmap.BankBICMap{
+		"DE": {
+			"37040044": bicmap.BankBICEntry{
+				BIC:      "COBADEFFXXX",
+				BankName: "COMMERZBANK",
+				Country:  "DE",
+			},
+		},
+	}
+
+	bankInfo, err := parser.EnrichWithBankInfo(info, mockBicMap)
+	if err != nil {
+		t.Fatalf("EnrichWithBankInfo() error = %v", err)
+	}
+	if bankInfo.BankName != "COMMERZBANK" {
+		t.Errorf("EnrichWithBankInfo() got = %v, want COMMERZBANK", bankInfo.BankName)
+	}
+}
+
 func TestParser_Parse(t *testing.T) {
 	parser := ibanimpl.NewParser()
 	ibanStr := "DE89370400440532013000"

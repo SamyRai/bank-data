@@ -53,3 +53,37 @@ func TestService_ValidateByTag(t *testing.T) {
 		})
 	}
 }
+
+func TestService_Parse(t *testing.T) {
+	service := iban.NewService(
+		internal.NewValidator(),
+		internal.NewParser(),
+		internal.NewDetector(),
+		nil,
+	)
+
+	info, err := service.Parse("DE89370400440532013000")
+	if err != nil {
+		t.Fatalf("Parse() error = %v", err)
+	}
+	if info.CountryCode != "DE" {
+		t.Errorf("Parse() got = %v, want DE", info.CountryCode)
+	}
+}
+
+func TestService_Detect(t *testing.T) {
+	service := iban.NewService(
+		internal.NewValidator(),
+		internal.NewParser(),
+		internal.NewDetector(),
+		nil,
+	)
+
+	structure, err := service.Detect("DE89370400440532013000")
+	if err != nil {
+		t.Fatalf("Detect() error = %v", err)
+	}
+	if structure.CountryCode != "DE" {
+		t.Errorf("Detect() got = %v, want DE", structure.CountryCode)
+	}
+}
