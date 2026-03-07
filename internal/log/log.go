@@ -184,4 +184,20 @@ func Debug(msg string, fields Fields) {
 	Default.Debug(msg, fields)
 }
 
+// SetMinLevel reconfigures the default logger's minimum log level.
+func SetMinLevel(level Level) {
+	Default.mu.Lock()
+	defer Default.mu.Unlock()
+	Default.minLevel = level
+}
+
+// SetOutput reconfigures the default logger's output writer.
+func SetOutput(w io.Writer) {
+	Default.mu.Lock()
+	defer Default.mu.Unlock()
+	if w != nil {
+		Default.writer = w
+	}
+}
+
 // TODO(context: log package, priority: low, effort: 2h): Add support for log level filtering and output destination configuration.

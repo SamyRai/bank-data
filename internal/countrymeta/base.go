@@ -1,5 +1,7 @@
 package countrymeta
 
+//go:generate go run ../../gen/cmd/gen_registry/main.go ../../datasets/iban-registry.txt registry.go
+
 import "regexp"
 
 type Meta struct {
