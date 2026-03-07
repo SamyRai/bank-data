@@ -1,13 +1,11 @@
-package iban_test
+package iban
 
 import (
 	"testing"
-
-	ibanimpl "github.com/SamyRai/bank-data/internal/iban"
 )
 
 func TestValidator_Validate(t *testing.T) {
-	validator := ibanimpl.NewValidator()
+	validator := NewValidator()
 	tests := []struct {
 		name    string
 		iban    string
@@ -29,7 +27,7 @@ func TestValidator_Validate(t *testing.T) {
 }
 
 func TestParser_Parse(t *testing.T) {
-	parser := ibanimpl.NewParser()
+	parser := NewParser()
 	ibanStr := "DE89370400440532013000"
 	info, err := parser.Parse(ibanStr)
 	if err != nil {
@@ -41,7 +39,7 @@ func TestParser_Parse(t *testing.T) {
 }
 
 func TestDetector_Detect(t *testing.T) {
-	detector := ibanimpl.NewDetector()
+	detector := NewDetector()
 	ibanStr := "DE89370400440532013000"
 	structure, err := detector.Detect(ibanStr)
 	if err != nil {

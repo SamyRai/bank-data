@@ -1,0 +1,195 @@
+?   	github.com/SamyRai/bank-data/gen	[no test files]
+?   	github.com/SamyRai/bank-data/gen/cmd	[no test files]
+?   	github.com/SamyRai/bank-data/gen/cmd/bban_debug	[no test files]
+?   	github.com/SamyRai/bank-data/gen/cmd/gen_registry	[no test files]
+?   	github.com/SamyRai/bank-data/gen/cmd/pipeline	[no test files]
+?   	github.com/SamyRai/bank-data/gen/ibanfetch	[no test files]
+?   	github.com/SamyRai/bank-data/gen/ibanmeta	[no test files]
+PASS
+ok  	github.com/SamyRai/bank-data/internal/bic	0.488s
+?   	github.com/SamyRai/bank-data/internal/bic/map	[no test files]
+?   	github.com/SamyRai/bank-data/internal/checkdigit	[no test files]
+?   	github.com/SamyRai/bank-data/internal/countrymeta	[no test files]
+PASS
+ok  	github.com/SamyRai/bank-data/internal/log	0.538s
+PASS
+ok  	github.com/SamyRai/bank-data/internal/validation	0.463s
+?   	github.com/SamyRai/bank-data/pkg/bank	[no test files]
+?   	github.com/SamyRai/bank-data/pkg/bic	[no test files]
+goos: darwin
+goarch: amd64
+pkg: github.com/SamyRai/bank-data/pkg/iban
+cpu: VirtualApple @ 2.50GHz
+BenchmarkService_Validate_Matrix/Valid/country=DE-8         	 1000000	      1193 ns/op	  18.44 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=DE-8         	 1553379	       766.4 ns/op	  28.71 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=DE-8         	 1620902	       703.9 ns/op	  31.25 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=DE-8         	 1624922	       806.7 ns/op	  27.27 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=DE-8         	 1740612	       729.8 ns/op	  30.15 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=FR-8         	 1526948	       749.7 ns/op	  36.01 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=FR-8         	 1587118	       751.2 ns/op	  35.94 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=FR-8         	 1503724	       754.0 ns/op	  35.81 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=FR-8         	 1527128	       958.4 ns/op	  28.17 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=FR-8         	 1293972	       832.6 ns/op	  32.43 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=CH-8         	 1616540	       730.2 ns/op	  28.76 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=CH-8         	 1653963	       718.6 ns/op	  29.22 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=CH-8         	 1608163	       760.8 ns/op	  27.60 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=CH-8         	 1659307	       839.8 ns/op	  25.01 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=CH-8         	 1675047	       713.4 ns/op	  29.44 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=GB-8         	 1657748	       719.6 ns/op	  30.57 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=GB-8         	 1628638	       725.5 ns/op	  30.32 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=GB-8         	 1599427	       727.5 ns/op	  30.24 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=GB-8         	 1658470	       722.6 ns/op	  30.45 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Valid/country=GB-8         	 1639755	       730.7 ns/op	  30.11 MB/s	     704 B/op	       6 allocs/op
+BenchmarkService_Validate_Matrix/Error/type=Length-8        	 2640987	       464.8 ns/op	   8.61 MB/s	     800 B/op	       9 allocs/op
+BenchmarkService_Validate_Matrix/Error/type=Length-8        	 2586392	       466.7 ns/op	   8.57 MB/s	     800 B/op	       9 allocs/op
+BenchmarkService_Validate_Matrix/Error/type=Length-8        	 2567383	       480.8 ns/op	   8.32 MB/s	     800 B/op	       9 allocs/op
+BenchmarkService_Validate_Matrix/Error/type=Length-8        	 2541715	       463.0 ns/op	   8.64 MB/s	     800 B/op	       9 allocs/op
+BenchmarkService_Validate_Matrix/Error/type=Length-8        	 2515630	       470.0 ns/op	   8.51 MB/s	     800 B/op	       9 allocs/op
+BenchmarkService_Validate_Matrix/Error/type=Chars-8         	 2626429	       502.8 ns/op	  43.76 MB/s	     800 B/op	       9 allocs/op
+BenchmarkService_Validate_Matrix/Error/type=Chars-8         	 2515160	       468.1 ns/op	  47.00 MB/s	     800 B/op	       9 allocs/op
+BenchmarkService_Validate_Matrix/Error/type=Chars-8         	 2397276	       475.2 ns/op	  46.29 MB/s	     800 B/op	       9 allocs/op
+BenchmarkService_Validate_Matrix/Error/type=Chars-8         	 2549607	       493.5 ns/op	  44.58 MB/s	     800 B/op	       9 allocs/op
+BenchmarkService_Validate_Matrix/Error/type=Chars-8         	 2577254	       469.2 ns/op	  46.89 MB/s	     800 B/op	       9 allocs/op
+BenchmarkService_Validate_Matrix/Error/type=Checksum-8      	 1467146	       820.1 ns/op	  26.83 MB/s	     800 B/op	       9 allocs/op
+BenchmarkService_Validate_Matrix/Error/type=Checksum-8      	 1484086	       808.8 ns/op	  27.20 MB/s	     800 B/op	       9 allocs/op
+BenchmarkService_Validate_Matrix/Error/type=Checksum-8      	 1483408	       845.5 ns/op	  26.02 MB/s	     800 B/op	       9 allocs/op
+BenchmarkService_Validate_Matrix/Error/type=Checksum-8      	 1411372	       926.0 ns/op	  23.76 MB/s	     800 B/op	       9 allocs/op
+BenchmarkService_Validate_Matrix/Error/type=Checksum-8      	 1330044	      1003 ns/op	  21.93 MB/s	     800 B/op	       9 allocs/op
+BenchmarkService_ValidateBatch_Scaling/size=100-8           	    8914	    118739 ns/op	  18.53 MB/s	    842188 IBANs/s	   73355 B/op	     612 allocs/op
+BenchmarkService_ValidateBatch_Scaling/size=100-8           	   10000	    113332 ns/op	  19.41 MB/s	    882361 IBANs/s	   73357 B/op	     612 allocs/op
+BenchmarkService_ValidateBatch_Scaling/size=100-8           	   10000	    117394 ns/op	  18.74 MB/s	    851831 IBANs/s	   73356 B/op	     612 allocs/op
+BenchmarkService_ValidateBatch_Scaling/size=100-8           	    9505	    115725 ns/op	  19.01 MB/s	    864119 IBANs/s	   73354 B/op	     612 allocs/op
+BenchmarkService_ValidateBatch_Scaling/size=100-8           	   10000	    121399 ns/op	  18.12 MB/s	    823728 IBANs/s	   73356 B/op	     612 allocs/op
+BenchmarkService_ValidateBatch_Scaling/size=1000-8          	    1132	   1152721 ns/op	  19.09 MB/s	    867513 IBANs/s	  721873 B/op	    6013 allocs/op
+BenchmarkService_ValidateBatch_Scaling/size=1000-8          	    1152	   1085538 ns/op	  20.27 MB/s	    921203 IBANs/s	  721885 B/op	    6013 allocs/op
+BenchmarkService_ValidateBatch_Scaling/size=1000-8          	    1142	   1217723 ns/op	  18.07 MB/s	    821205 IBANs/s	  721867 B/op	    6013 allocs/op
+BenchmarkService_ValidateBatch_Scaling/size=1000-8          	    1058	   1141242 ns/op	  19.28 MB/s	    876239 IBANs/s	  721873 B/op	    6013 allocs/op
+BenchmarkService_ValidateBatch_Scaling/size=1000-8          	    1119	   1075868 ns/op	  20.45 MB/s	    929673 IBANs/s	  721866 B/op	    6013 allocs/op
+BenchmarkService_ValidateBatch_Scaling/size=10000-8         	     100	  10922049 ns/op	  20.14 MB/s	    915580 IBANs/s	 7208976 B/op	   60023 allocs/op
+BenchmarkService_ValidateBatch_Scaling/size=10000-8         	     100	  11200159 ns/op	  19.64 MB/s	    892845 IBANs/s	 7209012 B/op	   60023 allocs/op
+BenchmarkService_ValidateBatch_Scaling/size=10000-8         	     100	  11196756 ns/op	  19.65 MB/s	    893117 IBANs/s	 7208950 B/op	   60022 allocs/op
+BenchmarkService_ValidateBatch_Scaling/size=10000-8         	     100	  11039470 ns/op	  19.93 MB/s	    905841 IBANs/s	 7208992 B/op	   60023 allocs/op
+BenchmarkService_ValidateBatch_Scaling/size=10000-8         	     100	  12001169 ns/op	  18.33 MB/s	    833253 IBANs/s	 7209066 B/op	   60023 allocs/op
+BenchmarkService_Parse_Matrix-8                             	 2265968	       509.4 ns/op	  43.19 MB/s	     800 B/op	       7 allocs/op
+BenchmarkService_Parse_Matrix-8                             	 2280470	       440.2 ns/op	  49.97 MB/s	     800 B/op	       7 allocs/op
+BenchmarkService_Parse_Matrix-8                             	 2828870	       416.7 ns/op	  52.79 MB/s	     800 B/op	       7 allocs/op
+BenchmarkService_Parse_Matrix-8                             	 2807545	       431.7 ns/op	  50.96 MB/s	     800 B/op	       7 allocs/op
+BenchmarkService_Parse_Matrix-8                             	 2678281	       421.8 ns/op	  52.16 MB/s	     800 B/op	       7 allocs/op
+BenchmarkValidateIBANChecksum-8                             	15842324	        93.44 ns/op	       0 B/op	       0 allocs/op
+BenchmarkValidateIBANChecksum-8                             	13239868	        87.60 ns/op	       0 B/op	       0 allocs/op
+BenchmarkValidateIBANChecksum-8                             	14824636	        88.90 ns/op	       0 B/op	       0 allocs/op
+BenchmarkValidateIBANChecksum-8                             	13291611	        89.32 ns/op	       0 B/op	       0 allocs/op
+BenchmarkValidateIBANChecksum-8                             	13155567	        90.01 ns/op	       0 B/op	       0 allocs/op
+BenchmarkCharacterCheck-8                                   	100000000	        10.51 ns/op	       0 B/op	       0 allocs/op
+BenchmarkCharacterCheck-8                                   	100000000	        10.45 ns/op	       0 B/op	       0 allocs/op
+BenchmarkCharacterCheck-8                                   	100000000	        10.42 ns/op	       0 B/op	       0 allocs/op
+BenchmarkCharacterCheck-8                                   	100000000	        10.45 ns/op	       0 B/op	       0 allocs/op
+BenchmarkCharacterCheck-8                                   	100000000	        10.43 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	github.com/SamyRai/bank-data/pkg/iban	109.364s
+goos: darwin
+goarch: amd64
+pkg: github.com/SamyRai/bank-data/pkg/validation
+cpu: VirtualApple @ 2.50GHz
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=1-8         	   68107	     17943 ns/op	   5573276 ops/s	     368 B/op	       4 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=1-8         	   69232	     17523 ns/op	   5706896 ops/s	     368 B/op	       4 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=1-8         	   69393	     17458 ns/op	   5728088 ops/s	     368 B/op	       4 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=1-8         	   68575	     17453 ns/op	   5729688 ops/s	     368 B/op	       4 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=1-8         	   68487	     16745 ns/op	   5971859 ops/s	     368 B/op	       4 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=2-8         	   49326	     26462 ns/op	   3778942 ops/s	     481 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=2-8         	   48182	     27350 ns/op	   3656311 ops/s	     480 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=2-8         	   44982	     25466 ns/op	   3926792 ops/s	     480 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=2-8         	   47029	     25393 ns/op	   3938139 ops/s	     480 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=2-8         	   48390	     25076 ns/op	   3987899 ops/s	     480 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=4-8         	   44233	     27563 ns/op	   3628042 ops/s	     721 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=4-8         	   44335	     27164 ns/op	   3681303 ops/s	     721 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=4-8         	   43873	     27475 ns/op	   3639680 ops/s	     721 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=4-8         	   42862	     42109 ns/op	   2374786 ops/s	     721 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=4-8         	   40410	     36621 ns/op	   2730645 ops/s	     720 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=8-8         	   30004	     33459 ns/op	   2988761 ops/s	    1202 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=8-8         	   35922	     30314 ns/op	   3298766 ops/s	    1202 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=8-8         	   40380	     28940 ns/op	   3455414 ops/s	    1202 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=8-8         	   43710	     27964 ns/op	   3576094 ops/s	    1203 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=8-8         	   42776	     27792 ns/op	   3598169 ops/s	    1203 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=16-8        	   35355	     33146 ns/op	   3016970 ops/s	    2168 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=16-8        	   36994	     32619 ns/op	   3065710 ops/s	    2169 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=16-8        	   34670	     34846 ns/op	   2869771 ops/s	    2168 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=16-8        	   35442	     33309 ns/op	   3002238 ops/s	    2167 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=100/workers=16-8        	   31819	     32809 ns/op	   3047937 ops/s	    2166 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=1-8        	    6879	    190684 ns/op	   5244280 ops/s	    1280 B/op	       4 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=1-8        	    6781	    178995 ns/op	   5586760 ops/s	    1280 B/op	       4 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=1-8        	    6418	    191192 ns/op	   5230361 ops/s	    1280 B/op	       4 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=1-8        	    6754	    178548 ns/op	   5600778 ops/s	    1280 B/op	       4 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=1-8        	    6633	    186837 ns/op	   5352266 ops/s	    1280 B/op	       4 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=2-8        	    4405	    257059 ns/op	   3890167 ops/s	    1392 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=2-8        	    4676	    274253 ns/op	   3646273 ops/s	    1392 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=2-8        	    4266	    281006 ns/op	   3558647 ops/s	    1392 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=2-8        	    5238	    305499 ns/op	   3273345 ops/s	    1392 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=2-8        	    4408	    257747 ns/op	   3879790 ops/s	    1392 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=4-8        	    4226	    277045 ns/op	   3609532 ops/s	    1633 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=4-8        	    4702	    261836 ns/op	   3819185 ops/s	    1632 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=4-8        	    4387	    261002 ns/op	   3831396 ops/s	    1634 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=4-8        	    4659	    263234 ns/op	   3798905 ops/s	    1632 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=4-8        	    4351	    259082 ns/op	   3859781 ops/s	    1634 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=8-8        	    4828	    247120 ns/op	   4046617 ops/s	    2118 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=8-8        	    4806	    251063 ns/op	   3983063 ops/s	    2117 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=8-8        	    4886	    246373 ns/op	   4058893 ops/s	    2115 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=8-8        	    4917	    246997 ns/op	   4048635 ops/s	    2117 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=8-8        	    4851	    263543 ns/op	   3794455 ops/s	    2114 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=16-8       	    4270	    293575 ns/op	   3406287 ops/s	    3083 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=16-8       	    4231	    291950 ns/op	   3425248 ops/s	    3080 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=16-8       	    4129	    288784 ns/op	   3462797 ops/s	    3084 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=16-8       	    5706	    297293 ns/op	   3363691 ops/s	    3082 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=0s/size=1000/workers=16-8       	    4246	    286836 ns/op	   3486317 ops/s	    3084 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=1-8       	     788	   1532869 ns/op	     65237 ops/s	     464 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=1-8       	     775	   1729183 ns/op	     57831 ops/s	     464 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=1-8       	     772	   1740788 ns/op	     57446 ops/s	     464 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=1-8       	     717	   1748190 ns/op	     57202 ops/s	     464 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=1-8       	     778	   1641664 ns/op	     60914 ops/s	     464 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=2-8       	    1549	   1032216 ns/op	     96879 ops/s	     672 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=2-8       	    1338	    888243 ns/op	    112582 ops/s	     672 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=2-8       	    1303	    777754 ns/op	    128576 ops/s	     672 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=2-8       	    1514	    762960 ns/op	    131069 ops/s	     672 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=2-8       	    1584	    768375 ns/op	    130145 ops/s	     672 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=4-8       	    3086	    392102 ns/op	    255036 ops/s	    1104 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=4-8       	    3170	    423677 ns/op	    236029 ops/s	    1104 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=4-8       	    3087	    381761 ns/op	    261944 ops/s	    1104 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=4-8       	    3142	    388134 ns/op	    257643 ops/s	    1104 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=4-8       	    3188	    408805 ns/op	    244616 ops/s	    1104 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=8-8       	    5758	    213016 ns/op	    469450 ops/s	    1968 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=8-8       	    5535	    236445 ns/op	    422932 ops/s	    1968 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=8-8       	    5350	    230366 ns/op	    434093 ops/s	    1968 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=8-8       	    5966	    245206 ns/op	    407820 ops/s	    1968 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=8-8       	    5887	    202515 ns/op	    493790 ops/s	    1968 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=16-8      	    9830	    121245 ns/op	    824776 ops/s	    3699 B/op	      35 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=16-8      	    9876	    122899 ns/op	    813675 ops/s	    3700 B/op	      35 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=16-8      	    9523	    141436 ns/op	    707032 ops/s	    3703 B/op	      35 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=16-8      	   10000	    121788 ns/op	    821100 ops/s	    3700 B/op	      35 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=100/workers=16-8      	    9910	    150649 ns/op	    663796 ops/s	    3704 B/op	      35 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=1-8      	      76	  17496127 ns/op	     57156 ops/s	    1376 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=1-8      	      76	  16260002 ns/op	     61501 ops/s	    1376 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=1-8      	      75	  16979514 ns/op	     58895 ops/s	    1376 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=1-8      	      74	  16938811 ns/op	     59036 ops/s	    1376 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=1-8      	      75	  16104954 ns/op	     62093 ops/s	    1376 B/op	       5 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=2-8      	     139	   8100381 ns/op	    123451 ops/s	    1584 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=2-8      	     133	   8751457 ns/op	    114267 ops/s	    1584 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=2-8      	     150	   8677560 ns/op	    115240 ops/s	    1584 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=2-8      	     110	  11320676 ns/op	     88334 ops/s	    1584 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=2-8      	     144	   8056857 ns/op	    124118 ops/s	    1584 B/op	       7 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=4-8      	     290	   4147917 ns/op	    241085 ops/s	    2016 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=4-8      	     282	   4384266 ns/op	    228089 ops/s	    2016 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=4-8      	     254	   4426346 ns/op	    225921 ops/s	    2017 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=4-8      	     300	   4576214 ns/op	    218522 ops/s	    2018 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=4-8      	     308	   3894320 ns/op	    256785 ops/s	    2016 B/op	      11 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=8-8      	     624	   1987496 ns/op	    503146 ops/s	    2887 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=8-8      	     621	   1929411 ns/op	    518294 ops/s	    2880 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=8-8      	     625	   2262484 ns/op	    441993 ops/s	    2880 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=8-8      	     543	   2164152 ns/op	    462076 ops/s	    2880 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=8-8      	     547	   2410956 ns/op	    414774 ops/s	    2884 B/op	      19 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=16-8     	    1178	   1356242 ns/op	    737332 ops/s	    4614 B/op	      35 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=16-8     	    1221	   1197741 ns/op	    834906 ops/s	    4610 B/op	      35 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=16-8     	    1178	   1058104 ns/op	    945088 ops/s	    4628 B/op	      35 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=16-8     	    1165	   1124379 ns/op	    889381 ops/s	    4610 B/op	      35 allocs/op
+BenchmarkEngine_ValidateBatch_Scaling/delay=10µs/size=1000/workers=16-8     	    1168	   1005026 ns/op	    995001 ops/s	    4613 B/op	      35 allocs/op
+PASS
+ok  	github.com/SamyRai/bank-data/pkg/validation	147.110s

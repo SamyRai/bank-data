@@ -1,10 +1,7 @@
-package iban_test
+package iban
 
 import (
 	"testing"
-
-	internal "github.com/SamyRai/bank-data/internal/iban"
-	"github.com/SamyRai/bank-data/pkg/iban"
 )
 
 func FuzzIBANValidate(f *testing.F) {
@@ -15,10 +12,10 @@ func FuzzIBANValidate(f *testing.F) {
 	f.Add("INVALIDIBAN123")              // invalid
 	f.Add("")                            // invalid
 
-	service := iban.NewService(
-		internal.NewValidator(),
-		internal.NewParser(),
-		internal.NewDetector(),
+	service := NewService(
+		NewValidator(),
+		NewParser(),
+		NewDetector(),
 		nil, // pass nil for registry
 	)
 	f.Fuzz(func(_ *testing.T, s string) {

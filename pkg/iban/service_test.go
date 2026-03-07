@@ -1,21 +1,19 @@
-package iban_test
+package iban
 
 import (
 	"errors"
 	"testing"
 
-	internal "github.com/SamyRai/bank-data/internal/iban"
-	"github.com/SamyRai/bank-data/pkg/iban"
 	"github.com/SamyRai/bank-data/pkg/validation"
 )
 
 func TestService_ValidateByTag(t *testing.T) {
 	reg := validation.NewValidationRegistry()
-	reg.Register("iban", &internal.IBANBatchValidator{})
-	service := iban.NewService(
-		internal.NewValidator(),
-		internal.NewParser(),
-		internal.NewDetector(),
+	reg.Register("iban", &IBANBatchValidator{})
+	service := NewService(
+		NewValidator(),
+		NewParser(),
+		NewDetector(),
 		reg,
 	)
 	tests := []struct {
@@ -40,7 +38,7 @@ func TestService_ValidateByTag(t *testing.T) {
 					t.Errorf("ValidateByTag() error presence = %v, wantErr %v", result.Error != nil, tt.wantErr)
 				}
 				if result.Error != nil {
-					var ibanErr *iban.IBANError
+					var ibanErr *IBANError
 					if !errors.As(result.Error, &ibanErr) {
 						t.Errorf("ValidateByTag() error type = %T, want *IBANError", result.Error)
 					}

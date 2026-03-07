@@ -1,13 +1,10 @@
-package iban_test
+package iban
 
 import (
 	"bufio"
 	"os"
 	"strings"
 	"testing"
-
-	internal "github.com/SamyRai/bank-data/internal/iban"
-	"github.com/SamyRai/bank-data/pkg/iban"
 )
 
 func TestIBANVectors(t *testing.T) {
@@ -21,10 +18,10 @@ func TestIBANVectors(t *testing.T) {
 		}
 	}()
 	scanner := bufio.NewScanner(f)
-	service := iban.NewService(
-		internal.NewValidator(),
-		internal.NewParser(),
-		internal.NewDetector(),
+	service := NewService(
+		NewValidator(),
+		NewParser(),
+		NewDetector(),
 		nil, // pass nil for registry
 	)
 	for scanner.Scan() {

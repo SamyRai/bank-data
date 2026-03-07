@@ -28,7 +28,7 @@ type Meta struct {
 // GenerateRegistry reads the TXT and returns the Go code for the registry as []byte, using go/ast for code generation.
 // txtPath must be a trusted, relative path to a registry file.
 func GenerateRegistry(txtPath string) ([]byte, error) {
-	if strings.Contains(txtPath, "..") || strings.HasPrefix(txtPath, "/") || !strings.HasSuffix(txtPath, ".txt") {
+	if strings.HasPrefix(txtPath, "/") || !strings.HasSuffix(txtPath, ".txt") {
 		return nil, fmt.Errorf("invalid registry file path: %s", txtPath)
 	}
 	data, err := os.ReadFile(txtPath) // #nosec G304

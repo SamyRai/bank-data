@@ -1,4 +1,4 @@
-package iban_test
+package iban
 
 import (
 	"testing"

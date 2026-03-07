@@ -1,30 +1,26 @@
-// Package iban implements IBAN parsing and detection logic.
 package iban
 
 import (
 	"strings"
 
-	bicmap "github.com/SamyRai/bank-data/internal/bic/map"
 	"github.com/SamyRai/bank-data/internal/countrymeta"
 	"github.com/SamyRai/bank-data/internal/log"
-	"github.com/SamyRai/bank-data/pkg/bank"
-	"github.com/SamyRai/bank-data/pkg/iban"
 )
 
-// parser implements the iban.Parser interface for IBAN parsing.
+// parser implements the Parser interface for IBAN parsing.
 type parser struct{}
 
 // NewParser returns a new IBAN Parser implementing the Parser interface.
-func NewParser() iban.Parser {
+func NewParser() Parser {
 	return &parser{}
 }
 
 // Parse extracts IBANInfo from the given IBAN string. Returns IBANInfo and error if parsing fails.
-func (p *parser) Parse(ibanStr string) (*iban.IBANInfo, error) {
+func (p *parser) Parse(ibanStr string) (*IBANInfo, error) {
 	ibanStrNorm := strings.ToUpper(strings.ReplaceAll(ibanStr, " ", ""))
 	log.Debug("Parsing IBAN", log.Fields{"iban": ibanStrNorm, "operation": "parse"})
 	if len(ibanStrNorm) < 4 {
-		err := *iban.ErrWrongLength
+		err := *ErrWrongLength
 		err.Value = ibanStr
 		log.Warn("IBAN parse failed: wrong length", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
 		return nil, &err
@@ -32,13 +28,13 @@ func (p *parser) Parse(ibanStr string) (*iban.IBANInfo, error) {
 	country := ibanStrNorm[:2]
 	meta, ok := countrymeta.Registry[country]
 	if !ok {
-		err := *iban.ErrUnsupportedCountry
+		err := *ErrUnsupportedCountry
 		err.Value = country
 		log.Warn("IBAN parse failed: unsupported country", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
 		return nil, &err
 	}
 	if len(ibanStrNorm) != meta.Length {
-		err := *iban.ErrWrongLength
+		err := *ErrWrongLength
 		err.Value = ibanStr
 		log.Warn("IBAN parse failed: wrong length for country", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
 		return nil, &err
@@ -63,7 +59,7 @@ func (p *parser) Parse(ibanStr string) (*iban.IBANInfo, error) {
 		}
 	}
 	log.Info("IBAN parsed successfully", log.Fields{"iban": ibanStrNorm, "operation": "parse"})
-	return &iban.IBANInfo{
+	return &IBANInfo{
 		CountryCode:   country,
 		BankCode:      bankCode,
 		BranchCode:    "",
@@ -73,32 +69,20 @@ func (p *parser) Parse(ibanStr string) (*iban.IBANInfo, error) {
 	}, nil
 }
 
-// EnrichWithBankInfo enriches a parsed IBANInfo with BankInfo using the provided mapping.
-func (p *parser) EnrichWithBankInfo(info *iban.IBANInfo, bicMap bicmap.BankBICMap) (*bank.BankInfo, error) {
-	if info == nil {
-		return nil, ErrNilIBANInfo
-	}
-	bankInfo, ok := bicMap.LookupBankInfo(info.CountryCode, info.BankCode)
-	if !ok {
-		return nil, ErrBankInfoNotFound
-	}
-	return bankInfo, nil
-}
-
-// detector implements the iban.Detector interface.
+// detector implements the Detector interface.
 type detector struct{}
 
 // NewDetector returns a new IBAN Detector.
-func NewDetector() iban.Detector {
+func NewDetector() Detector {
 	return &detector{}
 }
 
 // Detect returns IBAN structure metadata for a given IBAN string.
-func (d *detector) Detect(ibanStr string) (*iban.IBANStructure, error) {
+func (d *detector) Detect(ibanStr string) (*IBANStructure, error) {
 	ibanStrNorm := strings.ToUpper(strings.ReplaceAll(ibanStr, " ", ""))
 	log.Debug("Detecting IBAN structure", log.Fields{"iban": ibanStrNorm, "operation": "detect"})
 	if len(ibanStrNorm) < 2 {
-		err := *iban.ErrWrongLength
+		err := *ErrWrongLength
 		err.Value = ibanStr
 		log.Warn("IBAN detect failed: wrong length", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
 		return nil, &err
@@ -106,32 +90,26 @@ func (d *detector) Detect(ibanStr string) (*iban.IBANStructure, error) {
 	country := ibanStrNorm[:2]
 	meta, ok := countrymeta.Registry[country]
 	if !ok {
-		err := *iban.ErrUnsupportedCountry
+		err := *ErrUnsupportedCountry
 		err.Value = country
 		log.Warn("IBAN detect failed: unsupported country", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
 		return nil, &err
 	}
 	structure := buildIBANStructureString(meta)
-	return &iban.IBANStructure{
+	return &IBANStructure{
 		CountryCode: meta.Country,
 		Length:      meta.Length,
 		Structure:   structure, // See structureLegend for meaning
 	}, nil
 }
 
-// structureLegend describes the meaning of each character in the structure string.
-// Example: DEkkbbbbbbbbcccccccccc
-//
-//	D/E = country code, k = check digits, b = bank code, c = account number
-//	Structure legend: C=country, K=check digits, B=bank code, A=account number, X=other/unknown
+// buildIBANStructureString builds the structure representation (e.g., CCKKBBBB).
 func buildIBANStructureString(meta countrymeta.Meta) string {
-	// Start with country code and check digits
 	structure := ""
 	if len(meta.Country) == 2 {
-		structure += "CC" // C = country code
+		structure += "CC"
 	}
-	structure += "KK" // K = check digits
-	// Fill the rest with B (bank), A (account), or X (other)
+	structure += "KK"
 	for i := 4; i < meta.Length; i++ {
 		switch {
 		case i >= meta.BankStart && i < meta.BankEnd:
@@ -144,9 +122,3 @@ func buildIBANStructureString(meta countrymeta.Meta) string {
 	}
 	return structure
 }
-
-// ErrNilIBANInfo is returned if IBANInfo is nil.
-var ErrNilIBANInfo = &iban.IBANError{Code: "nil_iban_info", Message: "IBANInfo is nil"}
-
-// ErrBankInfoNotFound is returned if no bank info is found for the IBAN.
-var ErrBankInfoNotFound = &iban.IBANError{Code: "bank_info_not_found", Message: "No bank info found for IBAN"}

@@ -1,4 +1,3 @@
-// Package iban provides a generic validator implementation for use with the batch validation engine.
 package iban
 
 import (
@@ -6,17 +5,16 @@ import (
 	"time"
 
 	"github.com/SamyRai/bank-data/internal/log"
-	"github.com/SamyRai/bank-data/pkg/iban"
 	"github.com/SamyRai/bank-data/pkg/validation"
 )
 
 // IBANBatchValidator implements validation.Validator for IBAN strings.
 type IBANBatchValidator struct {
-	Validator iban.Validator // dependency injection for testability
+	Validator Validator // dependency injection for testability
 }
 
 // NewIBANBatchValidator constructs an IBANBatchValidator with a custom validator.
-func NewIBANBatchValidator(v iban.Validator) *IBANBatchValidator {
+func NewIBANBatchValidator(v Validator) *IBANBatchValidator {
 	return &IBANBatchValidator{Validator: v}
 }
 
@@ -37,7 +35,7 @@ func (v *IBANBatchValidator) Validate(input string) validation.ValidationResult 
 		Details: map[string]any{"duration_ms": time.Since(start).Milliseconds()},
 	}
 	if err != nil {
-		var ibanErr *iban.IBANError
+		var ibanErr *IBANError
 		if errors.As(err, &ibanErr) {
 			vr.Details["code"] = ibanErr.Code
 			vr.Details["field"] = ibanErr.Field
