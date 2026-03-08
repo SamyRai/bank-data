@@ -5,6 +5,8 @@ import (
 	"iter"
 	"slices"
 	"testing"
+
+	"github.com/SamyRai/bank-data/pkg/bank"
 )
 
 func TestService_Validate_AllTypes(t *testing.T) {
@@ -122,5 +124,65 @@ func TestService_SuggestUnsupportedType(t *testing.T) {
 	svc := NewService()
 	if _, err := svc.Suggest("4111111111111111", IdentifierPAN); err == nil {
 		t.Fatalf("expected unsupported suggest error for PAN")
+	}
+}
+
+type mockBankEnricher struct{}
+
+func (m mockBankEnricher) LookupBank(countryCode, bankCode string) (*bank.BankInfo, bool) {
+	if countryCode == "GB" && bankCode == "BARC" {
+		return &bank.BankInfo{
+			CountryCode: "GB",
+			BankCode:    "BARC",
+			BIC:         "BARCGB22",
+			BankName:    "BARCLAYS BANK PLC",
+		}, true
+	}
+	return nil, false
+}
+
+func TestService_Parse_WithBankEnricher(t *testing.T) {
+	svc := NewService(WithBankEnricher(mockBankEnricher{}))
+
+	// Valid GB IBAN for 20-00-00
+	ibanStr := "GB60BARC20000055779911"
+	parsed, err := svc.Parse(ibanStr, IdentifierIBAN)
+	if err != nil {
+		t.Fatalf("Parse() failed: %v", err)
+	}
+	if parsed.Fields["bank_name"] != "BARCLAYS BANK PLC" {
+		t.Errorf("expected enriched bank_name, got %q", parsed.Fields["bank_name"])
+	}
+	if parsed.Fields["bic"] != "BARCGB22" {
+		t.Errorf("expected enriched bic, got %q", parsed.Fields["bic"])
+	}
+}
+
+func TestService_MustMethods(t *testing.T) {
+	svc := NewService().Must()
+
+	// Should not panic on valid
+	ibanStr := "DE89370400440532013000"
+	_ = svc.Detect(ibanStr)
+	_ = svc.Validate(ibanStr, IdentifierIBAN)
+	_ = svc.Parse(ibanStr, IdentifierIBAN)
+
+	// Should panic on invalid
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("expected panic on invalid input")
+		}
+	}()
+	svc.Detect("INVALID")
+}
+
+func TestBuildIBANStructure(t *testing.T) {
+	_, err := BuildIBANStructure("DE")
+	if err != nil {
+		t.Errorf("expected valid structure for DE, got %v", err)
+	}
+	_, err = BuildIBANStructure("XX")
+	if err == nil {
+		t.Errorf("expected error for XX, got nil")
 	}
 }
