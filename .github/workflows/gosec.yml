@@ -18,25 +18,39 @@ jobs:
         with:
           go-version-file: go.mod
       - name: Install GoSec
-        run: go install github.com/securego/gosec/v2/cmd/gosec@latest
-      - name: Select Go files
-        id: files
+        run: go install github.com/securego/gosec/v2/cmd/gosec@v2.22.3
+      - name: Select Go package targets
+        id: targets
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             base_ref="origin/${{ github.base_ref }}"
             git fetch origin "${{ github.base_ref }}" --depth=1
-            files=$(git diff --name-only "$base_ref"...HEAD -- '*.go' | tr '\n' ' ')
+            changed_files=$(git diff --name-only "$base_ref"...HEAD -- '*.go')
           else
             if git rev-parse --verify HEAD^ >/dev/null 2>&1; then
-              files=$(git diff --name-only HEAD^ HEAD -- '*.go' | tr '\n' ' ')
+              changed_files=$(git diff --name-only HEAD^ HEAD -- '*.go')
             else
-              files=$(git ls-files '*.go' | tr '\n' ' ')
+              changed_files=$(git ls-files '*.go')
             fi
           fi
-          echo "files=$files" >> "$GITHUB_OUTPUT"
+
+          if [[ -z "$changed_files" ]]; then
+            echo "targets=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          targets=$(
+            printf '%s\n' "$changed_files" \
+              | xargs -n1 dirname \
+              | sort -u \
+              | sed 's#^#./#' \
+              | tr '\n' ' '
+          )
+
+          echo "targets=$targets" >> "$GITHUB_OUTPUT"
       - name: Run GoSec
-        if: steps.files.outputs.files != ''
-        run: gosec ${{ steps.files.outputs.files }}
-      - name: No Go file changes
-        if: steps.files.outputs.files == ''
-        run: echo "No changed Go files to scan."
+        if: steps.targets.outputs.targets != ''
+        run: gosec ${{ steps.targets.outputs.targets }}
+      - name: No Go package changes
+        if: steps.targets.outputs.targets == ''
+        run: echo "No changed Go package targets to scan."
