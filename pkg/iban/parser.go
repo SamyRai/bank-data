@@ -1,7 +1,6 @@
 package iban
 
 import (
-	"crypto/subtle"
 	"strings"
 
 	"github.com/SamyRai/bank-data/internal/countrymeta"
@@ -73,5 +72,5 @@ func validateIBANChecksum(ibanStr string) bool {
 			return false
 		}
 	}
-	return subtle.ConstantTimeEq(int32(rem), 1) == 1
+	return rem == 1
 }

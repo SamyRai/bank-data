@@ -9,7 +9,7 @@ func FuzzSEPACreditorValidate(f *testing.F) {
 	f.Add("")
 
 	v := NewCreditorIDValidator()
-	f.Fuzz(func(t *testing.T, s string) {
+	f.Fuzz(func(_ *testing.T, s string) {
 		_ = v.Validate(s)
 	})
 }

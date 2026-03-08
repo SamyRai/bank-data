@@ -1,7 +1,6 @@
 package iban
 
 import (
-	"crypto/subtle"
 	"strings"
 
 	"github.com/SamyRai/bank-data/internal/countrymeta"
@@ -30,7 +29,7 @@ func (m *Module) Validate(normalized string) error {
 	}
 	for i := 0; i < len(normalized); i++ {
 		c := normalized[i]
-		if !((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z')) {
+		if c < '0' || (c > '9' && c < 'A') || c > 'Z' {
 			return &identifiers.ValidationError{Code: "invalid_chars", Message: "IBAN must be alphanumeric uppercase"}
 		}
 	}
@@ -130,5 +129,5 @@ func validateChecksum(iban string) bool {
 			return false
 		}
 	}
-	return subtle.ConstantTimeEq(int32(rem), 1) == 1
+	return rem == 1
 }

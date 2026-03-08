@@ -1,16 +1,18 @@
-# OSSAR workflow temporarily disabled due to no applicable tools for this Go project.
-# To re-enable, uncomment the lines below.
-# name: 'OSSAR (Open Source Static Analysis)'
-# on:
-#   push:
-#     branches: [ main ]
-#   pull_request:
-#     branches: [ main ]
-# jobs:
-#   ossar:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v4
-#       - name: Run OSSAR
-#         uses: github/ossar-action@v1
+name: "OSSAR (Open Source Static Analysis)"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ossar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: OSSAR not applicable for this repository
+        run: |
+          echo "OSSAR has no applicable tools for this Go-focused repository."
+          echo "Security scanning is covered by CodeQL and GoSec workflows."

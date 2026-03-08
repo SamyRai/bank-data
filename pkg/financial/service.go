@@ -78,14 +78,14 @@ func NewService(opts ...Option) *Service {
 	s := &Service{
 		registry: NewRegistry(),
 		detectionRank: map[IdentifierType]int{
-			IdentifierIBAN:         100,
-			IdentifierLEI:          95,
-			IdentifierISIN:         90,
-			IdentifierSEPACreditor: 85,
-			IdentifierBIC:          80,
+			IdentifierIBAN:              100,
+			IdentifierLEI:               95,
+			IdentifierISIN:              90,
+			IdentifierSEPACreditor:      85,
+			IdentifierBIC:               80,
 			IdentifierNationalAccountUK: 75,
-			IdentifierVAT:          70,
-			IdentifierPAN:          60,
+			IdentifierVAT:               70,
+			IdentifierPAN:               60,
 		},
 	}
 	for _, opt := range opts {

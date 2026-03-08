@@ -20,7 +20,7 @@ func FuzzService_DetectValidateParse(f *testing.F) {
 		f.Add(s)
 	}
 
-	f.Fuzz(func(t *testing.T, input string) {
+	f.Fuzz(func(_ *testing.T, input string) {
 		_, _ = svc.Detect(input)
 		_, _ = svc.Validate(input, "")
 		_, _ = svc.Parse(input, "")

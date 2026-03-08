@@ -6,13 +6,14 @@ import "fmt"
 type IdentifierType string
 
 const (
-	IdentifierIBAN         IdentifierType = "IBAN"
-	IdentifierBIC          IdentifierType = "BIC"
-	IdentifierSEPACreditor IdentifierType = "SEPA_CREDITOR_ID"
-	IdentifierLEI          IdentifierType = "LEI"
-	IdentifierISIN         IdentifierType = "ISIN"
-	IdentifierPAN          IdentifierType = "PAN"
-	IdentifierVAT          IdentifierType = "VAT"
+	IdentifierIBAN IdentifierType = "IBAN"
+	IdentifierBIC  IdentifierType = "BIC"
+	// #nosec G101 -- this is an identifier label, not a credential.
+	IdentifierSEPACreditor      IdentifierType = "SEPA_CREDITOR_ID"
+	IdentifierLEI               IdentifierType = "LEI"
+	IdentifierISIN              IdentifierType = "ISIN"
+	IdentifierPAN               IdentifierType = "PAN"
+	IdentifierVAT               IdentifierType = "VAT"
 	IdentifierNationalAccountUK IdentifierType = "NATIONAL_ACCOUNT_UK"
 )
 

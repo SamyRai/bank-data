@@ -7,7 +7,7 @@ func FuzzPain001ParseValidate(f *testing.F) {
 	f.Add("<Document></Document>")
 	f.Add("not xml")
 
-	f.Fuzz(func(t *testing.T, input string) {
+	f.Fuzz(func(_ *testing.T, input string) {
 		doc, err := ParsePain001([]byte(input))
 		if err != nil {
 			return

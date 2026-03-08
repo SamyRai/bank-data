@@ -9,7 +9,7 @@ func FuzzBICValidateAndParse(f *testing.F) {
 	f.Add("")
 
 	v := NewValidator()
-	f.Fuzz(func(t *testing.T, s string) {
+	f.Fuzz(func(_ *testing.T, s string) {
 		_ = v.Validate(s)
 		_, _ = Parse(s)
 	})

@@ -9,7 +9,7 @@ func FuzzIBANParseAndDetect(f *testing.F) {
 	f.Add("")
 
 	svc := NewService(nil, nil, nil, nil)
-	f.Fuzz(func(t *testing.T, s string) {
+	f.Fuzz(func(_ *testing.T, s string) {
 		_, _ = svc.Parse(s)
 		_, _ = svc.Detect(s)
 	})

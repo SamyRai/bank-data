@@ -24,7 +24,7 @@ func main() {
 		outputPath = os.Args[2]
 	}
 
-	if err := os.WriteFile(outputPath, code, 0644); err != nil {
+	if err := os.WriteFile(outputPath, code, 0600); err != nil {
 		log.Fatalf("failed to write registry file: %v", err)
 	}
 
