@@ -49,7 +49,7 @@ func run() error {
 		log.Error("Failed to download IBAN registry", log.Fields{"err": err.Error()})
 		return err
 	}
-	code, err := ibanmeta.GenerateRegistry("iban_registry.txt")
+	code, err := ibanmeta.GenerateRegistry("datasets/iban-registry.txt")
 	if err != nil {
 		log.Error("Registry generation failed", log.Fields{"err": err.Error()})
 		return err
