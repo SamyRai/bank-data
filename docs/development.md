@@ -39,12 +39,15 @@ go test -coverprofile=coverage.out ./... && ./scripts/check_coverage.sh
 Country metadata is generated from `datasets/iban-registry.txt`.
 
 ```sh
-# regenerate internal/countrymeta/registry.go
-go generate ./...
+# fetch the latest registry and regenerate internal/countrymeta/registry.go
+./scripts/generate_registry.sh
 
-# run focused IBAN checks after regeneration
+# optionally validate the new manifest and run focused IBAN checks
+go run cmd/manifest/main.go datasets/manifest.json
 go test ./pkg/iban
 ```
+
+When regenerating the registry from a new upstream SWIFT update, remember to update the `checksum` and `generation_timestamp` fields for the `iban-registry` dataset in `datasets/manifest.json`. The generator outputs deterministic code (ordered and `go fmt` applied) to prevent noisy diffs.
 
 ## Contribution Rules
 

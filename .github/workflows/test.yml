@@ -20,6 +20,9 @@ jobs:
       - name: Docs and release artifact checks
         run: |
           ./scripts/check_repo_docs.sh
+      - name: Validate dataset manifest
+        run: |
+          go run cmd/manifest/main.go datasets/manifest.json
       - name: Run tests with coverage
         run: |
           go test -coverprofile=coverage.out ./...
