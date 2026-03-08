@@ -38,6 +38,23 @@ func main() {
 }
 ```
 
+## Runnable Identifier Examples
+
+```go
+svc := financial.NewService()
+
+svc.Validate("DE89370400440532013000", financial.IdentifierIBAN)
+svc.Validate("DEUTDEFF", financial.IdentifierBIC)
+svc.Validate("DE98ZZZ09999999999", financial.IdentifierSEPACreditor)
+svc.Validate("529900T8BM49AURSDO78", financial.IdentifierLEI)
+svc.Validate("US0378331005", financial.IdentifierISIN)
+svc.Validate("4111111111111111", financial.IdentifierPAN)
+svc.Validate("DE136695976", financial.IdentifierVAT)
+svc.Validate("20-00-00 55779911", financial.IdentifierNationalAccountUK)
+```
+
+See executable examples in [`pkg/financial/examples_test.go`](pkg/financial/examples_test.go).
+
 ## Supported Identifier Types
 
 - `IBAN`
@@ -47,6 +64,7 @@ func main() {
 - `ISIN`
 - `PAN`
 - `VAT` (initial checks for `DE`, `FR`, `NL`, `IT`, `ES`)
+- `NATIONAL_ACCOUNT_UK` (sort code + account number pair)
 
 ## Project Structure
 
@@ -61,6 +79,7 @@ func main() {
 - [Architecture Overview](docs/architecture.md)
 - [API Reference](docs/api_reference.md)
 - [Development Guide](docs/development.md)
+- [Getting Started](docs/getting_started.md)
 
 ## Contributing
 
