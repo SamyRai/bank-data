@@ -22,7 +22,7 @@ func (m *Module) DetectCandidate(normalized string) bool {
 	}
 	for i := 0; i < len(normalized); i++ {
 		c := normalized[i]
-		if !((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z')) {
+		if c < '0' || (c > '9' && c < 'A') || c > 'Z' {
 			return false
 		}
 	}

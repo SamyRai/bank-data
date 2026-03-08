@@ -48,10 +48,10 @@ func (m *Module) Parse(normalized string) (map[string]string, error) {
 		return nil, err
 	}
 	return map[string]string{
-		"country_code":    "GB",
-		"sort_code":       normalized[:6],
-		"account_number":  normalized[6:],
+		"country_code":     "GB",
+		"sort_code":        normalized[:6],
+		"account_number":   normalized[6:],
 		"composite_number": normalized,
-		"raw":             normalized,
+		"raw":              normalized,
 	}, nil
 }

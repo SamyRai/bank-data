@@ -17,8 +17,8 @@ const (
 
 // Document models the subset of pain.001 used by this library.
 type Document struct {
-	XMLName          xml.Name          `xml:"Document"`
-	CustomerTransfer CustomerTransfer  `xml:"CstmrCdtTrfInitn"`
+	XMLName          xml.Name         `xml:"Document"`
+	CustomerTransfer CustomerTransfer `xml:"CstmrCdtTrfInitn"`
 }
 
 type CustomerTransfer struct {
@@ -31,13 +31,13 @@ type PaymentInfo struct {
 }
 
 type Debtor struct {
-	Name    string      `xml:"Nm"`
+	Name    string        `xml:"Nm"`
 	Address PostalAddress `xml:"PstlAdr"`
 }
 
 type Tx struct {
-	Amount Amount `xml:"Amt>InstdAmt"`
-	Agent  Agent  `xml:"CdtrAgt"`
+	Amount   Amount   `xml:"Amt>InstdAmt"`
+	Agent    Agent    `xml:"CdtrAgt"`
 	Creditor Creditor `xml:"Cdtr"`
 }
 
@@ -51,7 +51,7 @@ type Agent struct {
 }
 
 type Creditor struct {
-	Name    string       `xml:"Nm"`
+	Name    string        `xml:"Nm"`
 	Address PostalAddress `xml:"PstlAdr"`
 }
 

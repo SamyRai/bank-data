@@ -35,13 +35,13 @@ func TestProperty_NormalizationIdempotence(t *testing.T) {
 func TestProperty_ParseValidateConsistency(t *testing.T) {
 	svc := NewService()
 	validByType := map[IdentifierType][]string{
-		IdentifierIBAN:         {"DE89370400440532013000", "GB82WEST12345698765432"},
-		IdentifierBIC:          {"DEUTDEFF", "DEUTDEFF500"},
-		IdentifierSEPACreditor: {"DE98ZZZ09999999999"},
-		IdentifierLEI:          {"529900T8BM49AURSDO78"},
-		IdentifierISIN:         {"US0378331005"},
-		IdentifierPAN:          {"4111111111111111", "5555555555554444"},
-		IdentifierVAT:          {"DE136695976", "FR40303265045", "NL123456782B12", "IT12345678903", "ES12345678Z"},
+		IdentifierIBAN:              {"DE89370400440532013000", "GB82WEST12345698765432"},
+		IdentifierBIC:               {"DEUTDEFF", "DEUTDEFF500"},
+		IdentifierSEPACreditor:      {"DE98ZZZ09999999999"},
+		IdentifierLEI:               {"529900T8BM49AURSDO78"},
+		IdentifierISIN:              {"US0378331005"},
+		IdentifierPAN:               {"4111111111111111", "5555555555554444"},
+		IdentifierVAT:               {"DE136695976", "FR40303265045", "NL123456782B12", "IT12345678903", "ES12345678Z"},
 		IdentifierNationalAccountUK: {"20-00-00 55779911"},
 	}
 
@@ -96,14 +96,14 @@ func mutateLastAlnum(s string) string {
 		return s
 	}
 	last := s[len(s)-1]
-	replacement := byte('0')
+	var replacement byte
 	switch {
 	case last >= '0' && last <= '9':
-		replacement = byte('0' + ((last-'0'+1)%10))
+		replacement = byte('0' + ((last - '0' + 1) % 10))
 	case last >= 'A' && last <= 'Z':
-		replacement = byte('A' + ((last-'A'+1)%26))
+		replacement = byte('A' + ((last - 'A' + 1) % 26))
 	case last >= 'a' && last <= 'z':
-		replacement = byte('a' + ((last-'a'+1)%26))
+		replacement = byte('a' + ((last - 'a' + 1) % 26))
 	default:
 		replacement = 'X'
 	}
