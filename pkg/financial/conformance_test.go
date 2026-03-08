@@ -1,6 +1,8 @@
 package financial_test
 
 import (
+	"context"
+	"iter"
 	"strings"
 	"testing"
 
@@ -87,7 +89,7 @@ func TestParseValidateParity(t *testing.T) {
 	}
 }
 
-func TestPublicAPISnapshot(t *testing.T) {
+func TestPublicAPISnapshot(_ *testing.T) {
 	// This test asserts the public API methods of the Service via compile-time
 	// checks of interface signatures. This ensures we don't accidentally break
 	// method signatures in a minor or patch release.
@@ -98,6 +100,8 @@ func TestPublicAPISnapshot(t *testing.T) {
 		Validate(input string, hint financial.IdentifierType) (financial.ValidationReport, error)
 		Parse(input string, hint financial.IdentifierType) (financial.ParsedIdentifier, error)
 		Suggest(input string, hint financial.IdentifierType) ([]financial.Suggestion, error)
+		ValidateBatch(ctx context.Context, inputs []string, hint financial.IdentifierType) []financial.ValidationReport
+		StreamValidate(ctx context.Context, inputs iter.Seq[string], hint financial.IdentifierType) iter.Seq[financial.ValidationReport]
 	}
 
 	// This assignment acts as a compile-time check that *financial.Service
