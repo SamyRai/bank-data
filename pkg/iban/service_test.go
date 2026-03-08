@@ -9,13 +9,13 @@ import (
 
 func TestService_ValidateByTag(t *testing.T) {
 	reg := validation.NewValidationRegistry()
-	reg.Register("iban", &IBANBatchValidator{})
 	service := NewService(
 		NewValidator(),
 		NewParser(),
 		NewDetector(),
 		reg,
 	)
+	reg.Register("iban", &IBANBatchValidator{Validator: NewValidator()})
 	tests := []struct {
 		name    string
 		tag     string

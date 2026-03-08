@@ -138,7 +138,8 @@ func (s *Service) ValidateByTag(tag string, input string) (validation.Validation
 	}
 	// Try to use the generic Validator interface
 	if validator, ok := v.(validation.Validator[string, validation.ValidationResult]); ok {
-		return validator.Validate(input), nil
+		res := validator.Validate(input)
+		return res, res.Error
 	}
 	return validation.ValidationResult{Input: input, Valid: false, Error: ErrUnsupportedCountry}, ErrUnsupportedCountry
 }

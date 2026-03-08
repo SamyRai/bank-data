@@ -49,14 +49,16 @@ func main() {
 
 ## Project Structure
 
-- `pkg/iban`: Public API surface (Service, Interfaces, Types).
+- `pkg/financial`: The canonical v1 Public API for interacting with financial formats.
+- `pkg/iban`, `pkg/bic`, `pkg/sepa`: Legacy compatibility packages (deprecated).
 - `internal/`: Component implementations and metadata registry.
 - `gen/`: Tooling for automated registry maintenance.
 
 ## Documentation
 
+- [Getting Started](docs/getting_started.md)
+- [API Reference (v1 API Contract & Migration)](docs/api_reference.md)
 - [Architecture Overview](docs/architecture.md)
-- [API Reference](docs/api_reference.md)
 - [Development Guide](docs/development.md)
 
 ## Contributing
