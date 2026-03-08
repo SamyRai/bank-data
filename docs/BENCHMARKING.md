@@ -10,6 +10,18 @@ Use the provided automation script to run all benchmarks with statistical analys
 ./scripts/run_bench.sh
 ```
 
+For CI regression gating against the committed baseline:
+
+```bash
+./scripts/check_bench_regression.sh
+```
+
+For VoP matcher latency checks:
+
+```bash
+go test -run=^$ -bench=BenchmarkMatcher_Match -benchmem ./pkg/vop
+```
+
 ### Advanced Options
 
 - **Profiling**: Generate CPU and memory profiles to find bottlenecks.
@@ -23,6 +35,12 @@ Use the provided automation script to run all benchmarks with statistical analys
   ```bash
   ./scripts/run_bench.sh benchmarks/current_branch.txt --compare benchmarks/latest.txt
   ```
+
+## Quality Gates
+
+- Coverage gate uses `.ci/coverage_threshold.txt` and `./scripts/check_coverage.sh`.
+- Benchmark regression gate compares `benchmarks/financial_baseline.txt` against current runs and fails on >=10% regressions.
+- VoP matcher benchmark target is sub-millisecond per `MatchRequest` on developer hardware.
 
 ## Interpreting Results
 

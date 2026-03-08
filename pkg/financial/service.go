@@ -16,6 +16,7 @@ import (
 	ibanid "github.com/SamyRai/bank-data/internal/identifiers/iban"
 	isinid "github.com/SamyRai/bank-data/internal/identifiers/isin"
 	leiid "github.com/SamyRai/bank-data/internal/identifiers/lei"
+	nationalid "github.com/SamyRai/bank-data/internal/identifiers/nationalaccount"
 	panid "github.com/SamyRai/bank-data/internal/identifiers/pan"
 	sepaid "github.com/SamyRai/bank-data/internal/identifiers/sepa"
 	vatid "github.com/SamyRai/bank-data/internal/identifiers/vat"
@@ -50,16 +51,6 @@ func (r *Registry) Get(t IdentifierType) (identifiers.Module, bool) {
 	return mod, ok
 }
 
-func (r *Registry) snapshot() map[IdentifierType]identifiers.Module {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
-	out := make(map[IdentifierType]identifiers.Module, len(r.modules))
-	for k, v := range r.modules {
-		out[k] = v
-	}
-	return out
-}
-
 // Service is the canonical public entrypoint for financial identifiers.
 type Service struct {
 	registry      *Registry
@@ -92,6 +83,7 @@ func NewService(opts ...Option) *Service {
 			IdentifierISIN:         90,
 			IdentifierSEPACreditor: 85,
 			IdentifierBIC:          80,
+			IdentifierNationalAccountUK: 75,
 			IdentifierVAT:          70,
 			IdentifierPAN:          60,
 		},
@@ -108,6 +100,7 @@ func NewService(opts ...Option) *Service {
 	s.ensureDefault(IdentifierISIN, isinid.New())
 	s.ensureDefault(IdentifierPAN, panid.New())
 	s.ensureDefault(IdentifierVAT, vatid.New())
+	s.ensureDefault(IdentifierNationalAccountUK, nationalid.New())
 
 	return s
 }
@@ -126,8 +119,9 @@ func (s *Service) Detect(input string) (IdentifierType, error) {
 }
 
 func (s *Service) detectWithNormalized(input string) (IdentifierType, string, error) {
-	mods := s.registry.snapshot()
-	if len(mods) == 0 {
+	s.registry.mu.RLock()
+	if len(s.registry.modules) == 0 {
+		s.registry.mu.RUnlock()
 		return "", "", errors.New("no identifier modules registered")
 	}
 
@@ -137,9 +131,9 @@ func (s *Service) detectWithNormalized(input string) (IdentifierType, string, er
 		rank       int
 		length     int
 	}
-	matches := make([]match, 0, len(mods))
+	matches := make([]match, 0, len(s.registry.modules))
 
-	for t, mod := range mods {
+	for t, mod := range s.registry.modules {
 		n := mod.Normalize(input)
 		if !mod.DetectCandidate(n) {
 			continue
@@ -149,6 +143,7 @@ func (s *Service) detectWithNormalized(input string) (IdentifierType, string, er
 		}
 		matches = append(matches, match{typeID: t, normalized: n, rank: s.detectionRank[t], length: len(n)})
 	}
+	s.registry.mu.RUnlock()
 
 	if len(matches) == 0 {
 		return "", "", &ValidationError{Code: "not_detected", Message: "input does not match any supported identifier"}
@@ -224,6 +219,88 @@ func (s *Service) Parse(input string, hint IdentifierType) (ParsedIdentifier, er
 	}
 
 	return ParsedIdentifier{Type: report.Type, Normalized: report.Normalized, Fields: fields}, nil
+}
+
+// Suggest proposes deterministic correction candidates for invalid inputs.
+// Currently implemented for IBAN (adjacent transpositions and single-char substitutions).
+func (s *Service) Suggest(input string, hint IdentifierType) ([]Suggestion, error) {
+	target := hint
+	if target == "" {
+		target = IdentifierIBAN
+	}
+	if target != IdentifierIBAN {
+		return nil, &ValidationError{
+			Type:    target,
+			Code:    "unsupported_type",
+			Message: "suggest is currently implemented only for IBAN",
+		}
+	}
+
+	mod, ok := s.registry.Get(IdentifierIBAN)
+	if !ok {
+		return nil, &ValidationError{
+			Type:    IdentifierIBAN,
+			Code:    "unsupported_type",
+			Message: "IBAN module is not registered",
+		}
+	}
+
+	normalized := mod.Normalize(input)
+	if err := mod.Validate(normalized); err == nil {
+		return []Suggestion{}, nil
+	}
+
+	suggestions := make([]Suggestion, 0, 5)
+	seen := map[string]struct{}{}
+	add := func(candidate, reason string) {
+		if _, exists := seen[candidate]; exists {
+			return
+		}
+		if err := mod.Validate(candidate); err != nil {
+			return
+		}
+		seen[candidate] = struct{}{}
+		suggestions = append(suggestions, Suggestion{
+			Type:      IdentifierIBAN,
+			Candidate: candidate,
+			Reason:    reason,
+		})
+	}
+
+	for i := 0; i < len(normalized)-1 && len(suggestions) < 5; i++ {
+		if normalized[i] == normalized[i+1] {
+			continue
+		}
+		b := []byte(normalized)
+		b[i], b[i+1] = b[i+1], b[i]
+		add(string(b), "adjacent_transposition")
+	}
+
+	for i := 0; i < len(normalized) && len(suggestions) < 5; i++ {
+		c := normalized[i]
+		switch {
+		case c >= '0' && c <= '9':
+			for d := byte('0'); d <= '9' && len(suggestions) < 5; d++ {
+				if d == c {
+					continue
+				}
+				b := []byte(normalized)
+				b[i] = d
+				add(string(b), "single_char_substitution")
+			}
+		case c >= 'A' && c <= 'Z':
+			for d := byte('A'); d <= 'Z' && len(suggestions) < 5; d++ {
+				if d == c {
+					continue
+				}
+				b := []byte(normalized)
+				b[i] = d
+				add(string(b), "single_char_substitution")
+			}
+		}
+	}
+
+	return suggestions, nil
 }
 
 // ValidateBatch validates many inputs concurrently.

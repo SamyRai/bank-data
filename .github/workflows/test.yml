@@ -17,18 +17,39 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+      - name: Docs and release artifact checks
+        run: |
+          ./scripts/check_repo_docs.sh
       - name: Run tests with coverage
         run: |
           go test -coverprofile=coverage.out ./...
+      - name: Coverage gate
+        run: |
+          ./scripts/check_coverage.sh
       - name: Race checks (core packages)
         run: |
-          go test -race ./pkg/financial ./pkg/iban ./pkg/bic ./pkg/sepa ./pkg/validation
+          go test -race ./pkg/financial ./pkg/iban ./pkg/bic ./pkg/sepa ./pkg/nationalaccount ./pkg/vop ./pkg/iso20022 ./pkg/validation
       - name: Fuzz smoke (IBAN)
         run: |
           go test -run=^$ -fuzz=FuzzIBANValidate -fuzztime=3s ./pkg/iban
+      - name: Fuzz smoke (financial)
+        run: |
+          go test -run=^$ -fuzz=FuzzService_DetectValidateParse -fuzztime=2s ./pkg/financial
+      - name: Fuzz smoke (BIC/SEPA)
+        run: |
+          go test -run=^$ -fuzz=FuzzBICValidateAndParse -fuzztime=2s ./pkg/bic
+          go test -run=^$ -fuzz=FuzzSEPACreditorValidate -fuzztime=2s ./pkg/sepa
+      - name: Fuzz smoke (new local modules)
+        run: |
+          go test -run=^$ -fuzz=FuzzValidateAndParse -fuzztime=2s ./pkg/nationalaccount
+          go test -run=^$ -fuzz=FuzzMatcherMatch -fuzztime=2s ./pkg/vop
+          go test -run=^$ -fuzz=FuzzPain001ParseValidate -fuzztime=2s ./pkg/iso20022
       - name: Benchmark smoke
         run: |
           go test -run=^$ -bench=BenchmarkService_Validate_Matrix -benchtime=1x ./pkg/iban
+      - name: Benchmark regression gate
+        run: |
+          ./scripts/check_bench_regression.sh
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:

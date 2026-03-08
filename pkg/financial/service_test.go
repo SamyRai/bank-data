@@ -21,6 +21,7 @@ func TestService_Validate_AllTypes(t *testing.T) {
 		{name: "isin", input: "US0378331005", hint: IdentifierISIN},
 		{name: "pan", input: "4111111111111111", hint: IdentifierPAN},
 		{name: "vat", input: "DE136695976", hint: IdentifierVAT},
+		{name: "national account", input: "20-00-00 55779911", hint: IdentifierNationalAccountUK},
 	}
 
 	for _, tc := range cases {
@@ -50,6 +51,7 @@ func TestService_Detect_AndParse(t *testing.T) {
 		{input: "DE89370400440532013000", want: IdentifierIBAN, key: "bank_code"},
 		{input: "US0378331005", want: IdentifierISIN, key: "nsin"},
 		{input: "4111111111111111", want: IdentifierPAN, key: "network"},
+		{input: "20-00-00 55779911", want: IdentifierNationalAccountUK, key: "sort_code"},
 	}
 	for _, tc := range cases {
 		t.Run(tc.input, func(t *testing.T) {
@@ -73,7 +75,7 @@ func TestService_Detect_AndParse(t *testing.T) {
 
 func TestService_ValidateBatchAndStream(t *testing.T) {
 	svc := NewService()
-	inputs := []string{"DE89370400440532013000", "INVALID", "US0378331005"}
+	inputs := []string{"DE89370400440532013000", "INVALID", "US0378331005", "20-00-00 55779911"}
 	batch := svc.ValidateBatch(context.Background(), inputs, "")
 	if len(batch) != len(inputs) {
 		t.Fatalf("ValidateBatch() len = %d, want %d", len(batch), len(inputs))
@@ -100,7 +102,25 @@ func TestService_ValidateBatchAndStream(t *testing.T) {
 		types = append(types, r.Type)
 	}
 	slices.Sort(types)
-	if len(types) != 3 {
+	if len(types) != 4 {
 		t.Fatalf("unexpected stream types: %+v", types)
+	}
+}
+
+func TestService_SuggestIBAN(t *testing.T) {
+	svc := NewService()
+	suggestions, err := svc.Suggest("DE89 3704 0044 0532 0130 10", IdentifierIBAN)
+	if err != nil {
+		t.Fatalf("suggest failed: %v", err)
+	}
+	if len(suggestions) == 0 {
+		t.Fatalf("expected suggestions for close invalid IBAN")
+	}
+}
+
+func TestService_SuggestUnsupportedType(t *testing.T) {
+	svc := NewService()
+	if _, err := svc.Suggest("4111111111111111", IdentifierPAN); err == nil {
+		t.Fatalf("expected unsupported suggest error for PAN")
 	}
 }

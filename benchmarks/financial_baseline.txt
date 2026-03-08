@@ -1,0 +1,27 @@
+goos: darwin
+goarch: amd64
+pkg: github.com/SamyRai/bank-data/pkg/financial
+cpu: VirtualApple @ 2.50GHz
+BenchmarkFinancialValidate_Matrix/IBAN/valid-8         	 2866474	       430.7 ns/op	  51.08 MB/s	       0 B/op	       0 allocs/op
+BenchmarkFinancialValidate_Matrix/IBAN/valid-8         	 2781226	       425.6 ns/op	  51.70 MB/s	       0 B/op	       0 allocs/op
+BenchmarkFinancialValidate_Matrix/IBAN/valid-8         	 2909356	       411.8 ns/op	  53.42 MB/s	       0 B/op	       0 allocs/op
+BenchmarkFinancialValidate_Matrix/IBAN/invalid-8       	 1760803	       652.1 ns/op	  33.74 MB/s	      96 B/op	       4 allocs/op
+BenchmarkFinancialValidate_Matrix/IBAN/invalid-8       	 1791116	       762.8 ns/op	  28.84 MB/s	      96 B/op	       4 allocs/op
+BenchmarkFinancialValidate_Matrix/IBAN/invalid-8       	 1704453	       842.0 ns/op	  26.13 MB/s	      96 B/op	       4 allocs/op
+BenchmarkFinancialValidate_Matrix/LEI/valid-8          	 1000000	      1043 ns/op	  19.18 MB/s	      80 B/op	      12 allocs/op
+BenchmarkFinancialValidate_Matrix/LEI/valid-8          	 1305834	       985.7 ns/op	  20.29 MB/s	      80 B/op	      12 allocs/op
+BenchmarkFinancialValidate_Matrix/LEI/valid-8          	 1474500	       815.0 ns/op	  24.54 MB/s	      80 B/op	      12 allocs/op
+BenchmarkFinancialValidate_Matrix/ISIN/valid-8         	 6058466	       224.6 ns/op	  53.42 MB/s	     240 B/op	       4 allocs/op
+BenchmarkFinancialValidate_Matrix/ISIN/valid-8         	 5895918	       206.4 ns/op	  58.13 MB/s	     240 B/op	       4 allocs/op
+BenchmarkFinancialValidate_Matrix/ISIN/valid-8         	 5971036	       199.8 ns/op	  60.06 MB/s	     240 B/op	       4 allocs/op
+BenchmarkFinancialValidate_Matrix/PAN/valid-8          	  733374	      1667 ns/op	   9.60 MB/s	    6688 B/op	       4 allocs/op
+BenchmarkFinancialValidate_Matrix/PAN/valid-8          	  792307	      1428 ns/op	  11.20 MB/s	    6688 B/op	       4 allocs/op
+BenchmarkFinancialValidate_Matrix/PAN/valid-8          	  839061	      1645 ns/op	   9.73 MB/s	    6688 B/op	       4 allocs/op
+BenchmarkFinancialValidate_Matrix/VAT/valid-8          	  682059	      1635 ns/op	   6.73 MB/s	    6787 B/op	       4 allocs/op
+BenchmarkFinancialValidate_Matrix/VAT/valid-8          	  753494	      1597 ns/op	   6.89 MB/s	    6787 B/op	       4 allocs/op
+BenchmarkFinancialValidate_Matrix/VAT/valid-8          	  730322	      1690 ns/op	   6.51 MB/s	    6788 B/op	       4 allocs/op
+BenchmarkFinancialValidate_Matrix/AUTO/detect-8        	  213219	      5371 ns/op	   1.49 MB/s	   20676 B/op	      17 allocs/op
+BenchmarkFinancialValidate_Matrix/AUTO/detect-8        	  222202	      5953 ns/op	   1.34 MB/s	   20676 B/op	      17 allocs/op
+BenchmarkFinancialValidate_Matrix/AUTO/detect-8        	  226248	      5470 ns/op	   1.46 MB/s	   20676 B/op	      17 allocs/op
+PASS
+ok  	github.com/SamyRai/bank-data/pkg/financial	33.172s

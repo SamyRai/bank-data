@@ -13,6 +13,7 @@ const (
 	IdentifierISIN         IdentifierType = "ISIN"
 	IdentifierPAN          IdentifierType = "PAN"
 	IdentifierVAT          IdentifierType = "VAT"
+	IdentifierNationalAccountUK IdentifierType = "NATIONAL_ACCOUNT_UK"
 )
 
 // ValidationError contains machine-friendly and human-friendly failure information.
@@ -40,4 +41,11 @@ type ParsedIdentifier struct {
 	Type       IdentifierType
 	Normalized string
 	Fields     map[string]string
+}
+
+// Suggestion describes a candidate correction for invalid input.
+type Suggestion struct {
+	Type      IdentifierType
+	Candidate string
+	Reason    string
 }
