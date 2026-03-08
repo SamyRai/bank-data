@@ -11,11 +11,32 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
       - name: Install GoSec
         run: go install github.com/securego/gosec/v2/cmd/gosec@latest
+      - name: Select Go files
+        id: files
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            base_ref="origin/${{ github.base_ref }}"
+            git fetch origin "${{ github.base_ref }}" --depth=1
+            files=$(git diff --name-only "$base_ref"...HEAD -- '*.go' | tr '\n' ' ')
+          else
+            if git rev-parse --verify HEAD^ >/dev/null 2>&1; then
+              files=$(git diff --name-only HEAD^ HEAD -- '*.go' | tr '\n' ' ')
+            else
+              files=$(git ls-files '*.go' | tr '\n' ' ')
+            fi
+          fi
+          echo "files=$files" >> "$GITHUB_OUTPUT"
       - name: Run GoSec
-        run: gosec ./...
+        if: steps.files.outputs.files != ''
+        run: gosec ${{ steps.files.outputs.files }}
+      - name: No Go file changes
+        if: steps.files.outputs.files == ''
+        run: echo "No changed Go files to scan."

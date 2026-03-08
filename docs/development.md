@@ -52,3 +52,19 @@ go test ./pkg/iban
 2. Keep module ownership clear (normalize/detect/validate/parse per identifier).
 3. Avoid introducing `internal/*` types in public package signatures.
 4. Keep docs aligned with actual code behavior and CI checks.
+
+## Strategic Program Plans
+
+Detailed multi-objective development plans are maintained in:
+
+- `docs/development_program/README.md`
+- `docs/development_program/01-v1-public-api-contract.md`
+- `docs/development_program/02-dataset-governance-and-provenance.md`
+- `docs/development_program/03-country-coverage-expansion.md`
+- `docs/development_program/04-official-vector-and-conformance-program.md`
+- `docs/development_program/05-observability-and-diagnostics.md`
+- `docs/development_program/06-performance-slos-and-regression-control.md`
+- `docs/development_program/07-integration-surfaces-cli-http-grpc.md`
+- `docs/development_program/08-security-and-supply-chain-hardening.md`
+- `docs/development_program/09-vop-scoring-engine-maturity.md`
+- `docs/development_program/10-ecosystem-and-adoption.md`

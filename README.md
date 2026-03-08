@@ -80,6 +80,7 @@ See executable examples in [`pkg/financial/examples_test.go`](pkg/financial/exam
 - [API Reference](docs/api_reference.md)
 - [Development Guide](docs/development.md)
 - [Getting Started](docs/getting_started.md)
+- [Strategic Development Program](docs/development_program/README.md)
 
 ## Contributing
 
