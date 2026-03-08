@@ -183,7 +183,7 @@ func GenerateRegistry(txtPath string) ([]byte, error) {
 
 	formatted, err := format.Source([]byte(buf.String()))
 	if err != nil {
-		return nil, fmt.Errorf("failed to format generated code: %v", err)
+		return nil, fmt.Errorf("failed to format generated code: %w", err)
 	}
 
 	return formatted, nil

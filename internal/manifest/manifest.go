@@ -38,16 +38,16 @@ func ValidateManifest(data []byte, calculateChecksumFunc func(string) (string, e
 	var errs []error
 	var manifest Manifest
 	if err := json.Unmarshal(data, &manifest); err != nil {
-		return []error{fmt.Errorf("error parsing manifest JSON: %v", err)}
+		return []error{fmt.Errorf("error parsing manifest JSON: %w", err)}
 	}
 
 	if manifest.PolicyVersion <= 0 {
-		errs = append(errs, fmt.Errorf("Missing or invalid policy_version"))
+		errs = append(errs, fmt.Errorf("missing or invalid policy_version"))
 	}
 	if manifest.UpdatedAt == "" {
-		errs = append(errs, fmt.Errorf("Missing updated_at"))
+		errs = append(errs, fmt.Errorf("missing updated_at"))
 	} else if _, err := time.Parse(time.RFC3339, manifest.UpdatedAt); err != nil {
-		errs = append(errs, fmt.Errorf("Invalid updated_at format, must be RFC3339"))
+		errs = append(errs, fmt.Errorf("invalid updated_at format, must be RFC3339"))
 	}
 
 	seenDatasetIDs := make(map[string]struct{}, len(manifest.Datasets))
@@ -95,7 +95,7 @@ func ValidateManifest(data []byte, calculateChecksumFunc func(string) (string, e
 			// Verify checksum matches actual files only when both path and checksum shape are valid.
 			actualChecksum, err := calculateChecksumFunc(ds.Path)
 			if err != nil {
-				errs = append(errs, fmt.Errorf("Dataset %s: Could not calculate checksum for %s: %v", ds.ID, ds.Path, err))
+				errs = append(errs, fmt.Errorf("Dataset %s: Could not calculate checksum for %s: %w", ds.ID, ds.Path, err))
 			} else if actualChecksum != ds.Checksum {
 				errs = append(errs, fmt.Errorf("Dataset %s: Checksum mismatch for %s. Expected %s, got %s", ds.ID, ds.Path, ds.Checksum, actualChecksum))
 			}
@@ -136,7 +136,7 @@ func CalculateChecksum(pattern string) (string, error) {
 		if _, err := io.Copy(hash, file); err != nil {
 			closeErr := file.Close()
 			if closeErr != nil {
-				return "", fmt.Errorf("copy failed: %v (close failed: %v)", err, closeErr)
+				return "", fmt.Errorf("copy failed: %w (close failed: %v)", err, closeErr)
 			}
 			return "", err
 		}

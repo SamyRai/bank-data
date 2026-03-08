@@ -75,8 +75,8 @@ func TestValidateManifest_MissingFields(t *testing.T) {
 	data, _ := json.Marshal(manifest)
 	errs := ValidateManifest(data, mockCalculateChecksum(nil))
 
-	assertContains(t, errs, "Missing or invalid policy_version")
-	assertContains(t, errs, "Invalid updated_at format")
+	assertContains(t, errs, "missing or invalid policy_version")
+	assertContains(t, errs, "invalid updated_at format")
 	assertContains(t, errs, "Missing id")
 	assertContains(t, errs, "Missing path")
 	assertContains(t, errs, "Missing format")
