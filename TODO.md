@@ -11,15 +11,15 @@
 
 ### Bank Code Registry Expansion
 
-- [ ] **FR (France)** — BIC mapping from Banque de France directory
-- [ ] **AT (Austria)** — BLZ-to-BIC lookup from Österreichische Nationalbank dataset
-- [ ] **NL (Netherlands)** — Dutch bank code (Bankrekening) dataset integration
-- [ ] **ES (Spain)** — CCC (Código Cuenta Cliente) bank code mapping
-- [ ] **IT (Italy)** — ABI code-to-BIC mapping from Banca d'Italia
-- [ ] **PL (Poland)** — NRB / NBP bank code registry
-- [ ] **SE (Sweden)** — Clearing number to BIC mapping (Bankgirot)
-- [ ] **CH (Switzerland)** — BC-Nr to BIC mapping from SIX Group
-- [ ] **UK (United Kingdom)** — Sort Code to BIC via Open Banking directory (post-Brexit SEPA gap)
+- [x] **FR (France)** — BIC mapping from Banque de France directory
+- [x] **AT (Austria)** — BLZ-to-BIC lookup from Österreichische Nationalbank dataset
+- [x] **NL (Netherlands)** — Dutch bank code (Bankrekening) dataset integration
+- [x] **ES (Spain)** — CCC (Código Cuenta Cliente) bank code mapping
+- [x] **IT (Italy)** — ABI code-to-BIC mapping from Banca d'Italia
+- [x] **PL (Poland)** — NRB / NBP bank code registry
+- [x] **SE (Sweden)** — Clearing number to BIC mapping (Bankgirot)
+- [x] **CH (Switzerland)** — BC-Nr to BIC mapping from SIX Group
+- [x] **UK (United Kingdom)** — Sort Code to BIC via Open Banking directory (post-Brexit SEPA gap)
 - [ ] Add automated data refresh pipeline for official banking registries (`gen/` tooling)
 - [x] Add `datasets/` versioning strategy (tag source + date on each downloaded dataset)
 - [ ] Write per-country integration tests with real-world IBAN samples

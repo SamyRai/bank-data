@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 
@@ -99,7 +100,7 @@ func (r *Registry) LookupBank(countryCode, bankCode string) (*bank.BankInfo, boo
 
 // LoadDEFixedWidth loads Bundesbank BLZ/BIC data from explicit path.
 func (r *Registry) LoadDEFixedWidth(path string, meta SourceMetadata) error {
-	f, err := os.Open(path)
+	f, err := openRepoFile(path)
 	if err != nil {
 		return err
 	}
@@ -160,7 +161,7 @@ func (r *Registry) Countries() []string {
 
 // LoadCSV loads country records from a deterministic local CSV fixture/file.
 func (r *Registry) LoadCSV(path, countryCode string, schema CSVSchema, meta SourceMetadata) error {
-	f, err := os.Open(path)
+	f, err := openRepoFile(path)
 	if err != nil {
 		return err
 	}
@@ -216,4 +217,60 @@ func max(a, b int) int {
 		return a
 	}
 	return b
+}
+
+func openRepoFile(path string) (*os.File, error) {
+	trimmed := strings.TrimSpace(path)
+	if trimmed == "" {
+		return nil, errors.New("path is empty")
+	}
+
+	cleanPath := filepath.Clean(trimmed)
+	absPath, err := filepath.Abs(cleanPath)
+	if err != nil {
+		return nil, err
+	}
+
+	repoRoot, err := findRepoRootFromCWD()
+	if err != nil {
+		return nil, err
+	}
+
+	relToRepo, err := filepath.Rel(repoRoot, absPath)
+	if err != nil {
+		return nil, err
+	}
+	if relToRepo == ".." || strings.HasPrefix(relToRepo, ".."+string(os.PathSeparator)) {
+		return nil, fmt.Errorf("path escapes repository root: %s", path)
+	}
+
+	info, err := os.Stat(absPath)
+	if err != nil {
+		return nil, err
+	}
+	if info.IsDir() {
+		return nil, fmt.Errorf("expected file path, got directory: %s", path)
+	}
+
+	// #nosec G304 -- absPath is validated to remain inside repository root.
+	return os.Open(absPath)
+}
+
+func findRepoRootFromCWD() (string, error) {
+	dir, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+
+	for {
+		if _, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil {
+			return dir, nil
+		}
+
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			return "", errors.New("repository root not found from current directory")
+		}
+		dir = parent
+	}
 }
