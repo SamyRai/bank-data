@@ -2,18 +2,20 @@ package validation
 
 import "fmt"
 
-// ValidationError is a domain-specific error for validation failures.
-type ValidationError struct {
+// Error is a typed validation error.
+type Error struct {
+	Code    string
 	Field   string
 	Message string
-	Value   any
 }
 
-func (e *ValidationError) Error() string {
-	return fmt.Sprintf("%s: %s (value: %v)", e.Field, e.Message, e.Value)
+func (e *Error) Error() string {
+	if e.Field == "" {
+		return fmt.Sprintf("%s: %s", e.Code, e.Message)
+	}
+	return fmt.Sprintf("%s %s: %s", e.Code, e.Field, e.Message)
 }
 
-// NewValidationError creates a new ValidationError.
-func NewValidationError(field, message string, value any) error {
-	return &ValidationError{Field: field, Message: message, Value: value}
+func NewError(code, field, message string) *Error {
+	return &Error{Code: code, Field: field, Message: message}
 }

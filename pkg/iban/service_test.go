@@ -1,53 +1,30 @@
 package iban
 
-import (
-	"errors"
-	"testing"
+import "testing"
 
-	"github.com/SamyRai/bank-data/pkg/validation"
-)
+func TestService_Validate_Parse_Detect(t *testing.T) {
+	svc := NewService(NewValidator(), NewParser(), NewDetector(), nil)
 
-func TestService_ValidateByTag(t *testing.T) {
-	reg := validation.NewValidationRegistry()
-	reg.Register("iban", &IBANBatchValidator{})
-	service := NewService(
-		NewValidator(),
-		NewParser(),
-		NewDetector(),
-		reg,
-	)
-	tests := []struct {
-		name    string
-		tag     string
-		input   string
-		wantOk  bool
-		wantErr bool
-	}{
-		{"valid IBAN by tag", "iban", "DE89370400440532013000", true, false},
-		{"invalid IBAN by tag", "iban", "INVALIDIBAN123", false, true},
-		{"unsupported tag", "bic", "SOMEVALUE", false, true},
+	if err := svc.Validate("DE89370400440532013000"); err != nil {
+		t.Fatalf("Validate() unexpected error: %v", err)
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result, err := service.ValidateByTag(tt.tag, tt.input)
-			if tt.tag == "iban" {
-				if result.Valid != tt.wantOk {
-					t.Errorf("ValidateByTag() Valid = %v, want %v", result.Valid, tt.wantOk)
-				}
-				if (result.Error != nil) != tt.wantErr {
-					t.Errorf("ValidateByTag() error presence = %v, wantErr %v", result.Error != nil, tt.wantErr)
-				}
-				if result.Error != nil {
-					var ibanErr *IBANError
-					if !errors.As(result.Error, &ibanErr) {
-						t.Errorf("ValidateByTag() error type = %T, want *IBANError", result.Error)
-					}
-				}
-			} else {
-				if err == nil {
-					t.Errorf("ValidateByTag() error = nil, want error for unsupported tag")
-				}
-			}
-		})
+	if err := svc.Validate("DE89370400440532013001"); err == nil {
+		t.Fatalf("Validate() expected checksum error")
+	}
+
+	info, err := svc.Parse("DE89370400440532013000")
+	if err != nil {
+		t.Fatalf("Parse() unexpected error: %v", err)
+	}
+	if info.BankCode != "37040044" {
+		t.Fatalf("Parse() bank code = %s, want 37040044", info.BankCode)
+	}
+
+	st, err := svc.Detect("DE89370400440532013000")
+	if err != nil {
+		t.Fatalf("Detect() unexpected error: %v", err)
+	}
+	if st.Structure != "CCKKBBBBBBBBAAAAAAAAAA" {
+		t.Fatalf("Detect() structure = %s, want CCKKBBBBBBBBAAAAAAAAAA", st.Structure)
 	}
 }

@@ -1,20 +1,23 @@
-// Package iban provides interfaces for IBAN validation, parsing, and information extraction.
 package iban
 
-// Validator defines the interface for IBAN validation.
-// Validate returns an error if the IBAN is invalid, or nil if valid.
+import "github.com/SamyRai/bank-data/pkg/bank"
+
+// Validator validates an IBAN string.
 type Validator interface {
 	Validate(iban string) error
 }
 
-// Parser defines the interface for IBAN parsing and information extraction.
-// Parse returns IBANInfo and error if parsing fails.
+// Parser parses an IBAN string into structured components.
 type Parser interface {
 	Parse(iban string) (*IBANInfo, error)
 }
 
-// Detector defines the interface for IBAN country and structure detection.
-// Detect returns IBANStructure and error if detection fails.
+// Detector provides country-level IBAN structure metadata.
 type Detector interface {
 	Detect(iban string) (*IBANStructure, error)
+}
+
+// BankLookup is an optional enrichment seam for bank metadata.
+type BankLookup interface {
+	LookupBank(country, bankCode string) (*bank.BankInfo, bool)
 }

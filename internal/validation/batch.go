@@ -1,48 +1,19 @@
-// Package validation provides a generic, parallel batch validation engine for any validator.
+// Package validation provides deprecated compatibility wrappers.
 package validation
 
 import (
-	"sync"
+	"context"
 
-	"github.com/SamyRai/bank-data/pkg/validation"
+	corevalidation "github.com/SamyRai/bank-data/internal/core/validation"
 )
 
-// BatchValidator runs validations in parallel using a worker pool.
+// BatchValidator is kept for backward compatibility and delegates to core engine.
 type BatchValidator[T any, R any] struct {
-	Validator validation.Validator[T, R]
-	Workers   int // Number of parallel workers
+	Validator corevalidation.Validator[T, R]
+	Workers   int
 }
 
-// ValidateBatch validates a slice of inputs in parallel and returns results in input order.
 func (b *BatchValidator[T, R]) ValidateBatch(inputs []T) []R {
-	n := len(inputs)
-	results := make([]R, n)
-	var wg sync.WaitGroup
-	jobs := make(chan int, n)
-
-	// Start workers
-	for w := 0; w < b.getWorkers(); w++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			for i := range jobs {
-				results[i] = b.Validator.Validate(inputs[i])
-			}
-		}()
-	}
-
-	// Send jobs
-	for i := range inputs {
-		jobs <- i
-	}
-	close(jobs)
-	wg.Wait()
-	return results
-}
-
-func (b *BatchValidator[T, R]) getWorkers() int {
-	if b.Workers > 0 {
-		return b.Workers
-	}
-	return 4 // default
+	engine := corevalidation.NewEngine[T, R](b.Validator, b.Workers)
+	return engine.ValidateBatch(context.Background(), inputs)
 }

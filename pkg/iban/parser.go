@@ -1,124 +1,77 @@
 package iban
 
 import (
+	"crypto/subtle"
 	"strings"
 
 	"github.com/SamyRai/bank-data/internal/countrymeta"
-	"github.com/SamyRai/bank-data/internal/log"
+	ibanid "github.com/SamyRai/bank-data/internal/identifiers/iban"
 )
 
-// parser implements the Parser interface for IBAN parsing.
-type parser struct{}
+type parser struct{ module *ibanid.Module }
 
-// NewParser returns a new IBAN Parser implementing the Parser interface.
-func NewParser() Parser {
-	return &parser{}
-}
+type detector struct{ module *ibanid.Module }
 
-// Parse extracts IBANInfo from the given IBAN string. Returns IBANInfo and error if parsing fails.
+func NewParser() Parser { return &parser{module: ibanid.New()} }
+
 func (p *parser) Parse(ibanStr string) (*IBANInfo, error) {
-	ibanStrNorm := strings.ToUpper(strings.ReplaceAll(ibanStr, " ", ""))
-	log.Debug("Parsing IBAN", log.Fields{"iban": ibanStrNorm, "operation": "parse"})
-	if len(ibanStrNorm) < 4 {
-		err := *ErrWrongLength
-		err.Value = ibanStr
-		log.Warn("IBAN parse failed: wrong length", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
-		return nil, &err
+	n := p.module.Normalize(ibanStr)
+	fields, err := p.module.Parse(n)
+	if err != nil {
+		return nil, toIBANError(n, err)
 	}
-	country := ibanStrNorm[:2]
-	meta, ok := countrymeta.Registry[country]
-	if !ok {
-		err := *ErrUnsupportedCountry
-		err.Value = country
-		log.Warn("IBAN parse failed: unsupported country", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
-		return nil, &err
-	}
-	if len(ibanStrNorm) != meta.Length {
-		err := *ErrWrongLength
-		err.Value = ibanStr
-		log.Warn("IBAN parse failed: wrong length for country", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
-		return nil, &err
-	}
-	checkDigits := ibanStrNorm[2:4]
-	bankCode := ""
-	accountNumber := ""
-	// BBAN starts at position 4 in IBAN
-	bbanOffset := 4
-	if meta.BankStart > 0 && meta.BankEnd > 0 && meta.BankEnd > meta.BankStart {
-		start := bbanOffset + (meta.BankStart - 1)
-		end := bbanOffset + meta.BankEnd
-		if end <= len(ibanStrNorm) && start < end {
-			bankCode = ibanStrNorm[start:end]
-		}
-	}
-	if meta.AccountStart > 0 && meta.AccountEnd > 0 && meta.AccountEnd > meta.AccountStart {
-		start := bbanOffset + (meta.AccountStart - 1)
-		end := bbanOffset + meta.AccountEnd
-		if end <= len(ibanStrNorm) && start < end {
-			accountNumber = ibanStrNorm[start:end]
-		}
-	}
-	log.Info("IBAN parsed successfully", log.Fields{"iban": ibanStrNorm, "operation": "parse"})
 	return &IBANInfo{
-		CountryCode:   country,
-		BankCode:      bankCode,
-		BranchCode:    "",
-		AccountNumber: accountNumber,
-		CheckDigits:   checkDigits,
-		Raw:           ibanStrNorm,
+		CountryCode:   fields["country_code"],
+		BankCode:      fields["bank_code"],
+		AccountNumber: fields["account_number"],
+		CheckDigits:   fields["check_digits"],
+		Raw:           fields["raw"],
 	}, nil
 }
 
-// detector implements the Detector interface.
-type detector struct{}
+func NewDetector() Detector { return &detector{module: ibanid.New()} }
 
-// NewDetector returns a new IBAN Detector.
-func NewDetector() Detector {
-	return &detector{}
-}
-
-// Detect returns IBAN structure metadata for a given IBAN string.
 func (d *detector) Detect(ibanStr string) (*IBANStructure, error) {
-	ibanStrNorm := strings.ToUpper(strings.ReplaceAll(ibanStr, " ", ""))
-	log.Debug("Detecting IBAN structure", log.Fields{"iban": ibanStrNorm, "operation": "detect"})
-	if len(ibanStrNorm) < 2 {
-		err := *ErrWrongLength
-		err.Value = ibanStr
-		log.Warn("IBAN detect failed: wrong length", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
-		return nil, &err
+	n := d.module.Normalize(ibanStr)
+	if len(n) < 2 {
+		return nil, &IBANError{Code: ErrCodeWrongLength, Field: "length", Message: "IBAN is too short", Value: ibanStr}
 	}
-	country := ibanStrNorm[:2]
-	meta, ok := countrymeta.Registry[country]
+	meta, ok := countrymeta.Registry[n[:2]]
 	if !ok {
-		err := *ErrUnsupportedCountry
-		err.Value = country
-		log.Warn("IBAN detect failed: unsupported country", log.Fields{"iban": ibanStrNorm, "code": err.Code, "error": err.Message})
-		return nil, &err
+		return nil, &IBANError{Code: ErrCodeUnsupportedCountry, Field: "country", Message: "IBAN country code is not supported", Value: n[:2]}
 	}
-	structure := buildIBANStructureString(meta)
 	return &IBANStructure{
 		CountryCode: meta.Country,
 		Length:      meta.Length,
-		Structure:   structure, // See structureLegend for meaning
+		Structure:   ibanid.BuildStructure(meta),
 	}, nil
 }
 
-// buildIBANStructureString builds the structure representation (e.g., CCKKBBBB).
 func buildIBANStructureString(meta countrymeta.Meta) string {
-	structure := ""
-	if len(meta.Country) == 2 {
-		structure += "CC"
+	// Backward-compatible helper retained for tests/callers in this package.
+	return ibanid.BuildStructure(meta)
+}
+
+func validateIBANChecksum(ibanStr string) bool {
+	n := strings.ToUpper(strings.ReplaceAll(ibanStr, " ", ""))
+	if len(n) < 4 || len(n) > 34 {
+		return false
 	}
-	structure += "KK"
-	for i := 4; i < meta.Length; i++ {
+	var buf [34]byte
+	copy(buf[:], n[4:])
+	copy(buf[len(n)-4:], n[:4])
+	rem := 0
+	for i := 0; i < len(n); i++ {
+		c := buf[i]
 		switch {
-		case i >= meta.BankStart && i < meta.BankEnd:
-			structure += "B"
-		case i >= meta.AccountStart && i < meta.AccountEnd:
-			structure += "A"
+		case c >= '0' && c <= '9':
+			rem = (rem*10 + int(c-'0')) % 97
+		case c >= 'A' && c <= 'Z':
+			v := int(c-'A') + 10
+			rem = (rem*100 + v) % 97
 		default:
-			structure += "X"
+			return false
 		}
 	}
-	return structure
+	return subtle.ConstantTimeEq(int32(rem), 1) == 1
 }

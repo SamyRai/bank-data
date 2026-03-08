@@ -1,49 +1,45 @@
-// Package validation provides shared types and interfaces for validation across the project.
+// Package validation exposes typed validation primitives.
 package validation
 
 import "sync"
 
-// Validator is a generic interface for validating any input type and returning a result.
+// Validator validates an input and returns a result.
 type Validator[T any, R any] interface {
 	Validate(input T) R
 }
 
-// CrossFieldValidator is an interface for validating relationships between multiple fields or conditional rules.
+// CrossFieldValidator validates interdependent values.
 type CrossFieldValidator[T any, R any] interface {
 	ValidateFields(input T) R
 }
 
-// ValidationResult is a standard result type for all validators.
+// ValidationResult is a typed, serializable validation outcome.
 type ValidationResult struct {
-	Input   any            // The input value validated
-	Valid   bool           // Whether the input is valid
-	Error   error          // Error if validation failed
-	Details map[string]any // Additional details about validation
+	Input   string
+	Valid   bool
+	Code    string
+	Message string
 }
 
-// ValidationRegistry allows registration and lookup of multiple validators by name.
-type ValidationRegistry struct {
-	validators map[string]any
+// Registry stores validators with typed keys/values.
+type Registry[K comparable, V any] struct {
 	mu         sync.RWMutex
+	validators map[K]V
 }
 
-// NewValidationRegistry creates a new ValidationRegistry instance.
-func NewValidationRegistry() *ValidationRegistry {
-	return &ValidationRegistry{
-		validators: make(map[string]any),
-	}
+func NewRegistry[K comparable, V any]() *Registry[K, V] {
+	return &Registry[K, V]{validators: make(map[K]V)}
 }
 
-// Register adds a validator to the registry under the given name.
-func (r *ValidationRegistry) Register(name string, v any) {
+func (r *Registry[K, V]) Register(key K, v V) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	r.validators[name] = v
+	r.validators[key] = v
 }
 
-// Get retrieves a validator by name from the registry.
-func (r *ValidationRegistry) Get(name string) any {
+func (r *Registry[K, V]) Get(key K) (V, bool) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
-	return r.validators[name]
+	v, ok := r.validators[key]
+	return v, ok
 }

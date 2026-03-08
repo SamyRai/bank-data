@@ -23,7 +23,7 @@ func TestCreditorIDValidator_Validate(t *testing.T) {
 	for _, c := range cases {
 		res := v.Validate(c.id)
 		if res.Valid != c.valid {
-			t.Errorf("%s: Validate(%q) = %v, want valid=%v", c.name, c.id, res.Error, c.valid)
+			t.Errorf("%s: Validate(%q) = valid:%v code:%s msg:%s, want valid=%v", c.name, c.id, res.Valid, res.Code, res.Message, c.valid)
 		}
 	}
 }
