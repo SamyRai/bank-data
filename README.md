@@ -77,7 +77,7 @@ See executable examples in [`pkg/financial/examples_test.go`](pkg/financial/exam
 ## Documentation
 
 - [Architecture Overview](docs/architecture.md)
-- [API Reference](docs/api_reference.md)
+- [API Reference](docs/api_reference.md) (includes v1 Compatibility & Deprecation Policy)
 - [Development Guide](docs/development.md)
 - [Getting Started](docs/getting_started.md)
 - [Strategic Development Program](docs/development_program/README.md)
