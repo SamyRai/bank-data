@@ -21,14 +21,14 @@
 - [ ] **CH (Switzerland)** — BC-Nr to BIC mapping from SIX Group
 - [ ] **UK (United Kingdom)** — Sort Code to BIC via Open Banking directory (post-Brexit SEPA gap)
 - [ ] Add automated data refresh pipeline for official banking registries (`gen/` tooling)
-- [ ] Add `datasets/` versioning strategy (tag source + date on each downloaded dataset)
+- [x] Add `datasets/` versioning strategy (tag source + date on each downloaded dataset)
 - [ ] Write per-country integration tests with real-world IBAN samples
 
 ### IBAN Format Extensions
 
-- [ ] Validate IBAN structure for all 80 registered SWIFT country definitions
+- [x] Validate IBAN structure for all registered SWIFT country definitions in generated metadata
 - [ ] Cross-verify registry against the latest EPC SEPA Country Rulebook (update cycle: annually)
-- [ ] Add fuzzy-match correction suggestions (e.g., `GB29 NWBK...` → detect transposed digits)
+- [x] Add fuzzy-match correction suggestions (e.g., `GB29 NWBK...` → detect transposed digits)
 
 ---
 
@@ -42,7 +42,7 @@
 - [x] **LEI (Legal Entity Identifier)** — MOD-97-10 checksum per ISO 17442
 - [x] **ISIN** — Luhn checksum + ISO 6166 country prefix validation
 - [x] **Card PAN** — Luhn algorithm with IIN/BIN prefix detection (Visa / MC / Amex / Maestro)
-- [ ] **National Account Numbers** — UK Sort Code + Account Number pair validation
+- [x] **National Account Numbers** — UK Sort Code + Account Number pair validation
 - [x] **SEPA Creditor ID** — MOD-97 check digits
 
 ### Unified `pkg/financial` Validator API
@@ -63,20 +63,20 @@
 
 ### Verification of Payee (VoP) Support
 
-- [ ] Design `pkg/vop` package with `MatchRequest` / `MatchResponse` types
+- [x] Design `pkg/vop` package with `MatchRequest` / `MatchResponse` types
   - Response categories: `Match`, `CloseMatch`, `NoMatch`, `Unavailable`
-- [ ] Implement name matching heuristics (levenshtein, diacritic normalization, legal suffix stripping)
-- [ ] Provide an interface `vop.Verifier` for integrating with bank API backends
-- [ ] Document integration pattern for PSPs using the library
-- [ ] Add fuzzy name matching benchmarks (target < 1ms per check)
+- [x] Implement name matching heuristics (levenshtein, diacritic normalization, legal suffix stripping)
+- [x] Provide an interface `vop.Verifier` for integrating with bank API backends
+- [x] Document integration pattern for PSPs using the library
+- [x] Add fuzzy name matching benchmarks (target < 1ms per check)
 
 ### ISO 20022 Alignment
 
-- [ ] Parse and validate ISO 20022 `pain.001` payment initiation messages (SCT schema)
-- [ ] Support ISO 20022 structured address fields (mandatory from **November 2026**)
+- [x] Parse and validate ISO 20022 `pain.001` payment initiation messages (SCT schema)
+- [x] Support ISO 20022 structured address fields (mandatory from **November 2026**)
   - Fields: `TwnNm`, `Ctry`, `PstCd` + max 2 × 70-char address lines
 - [ ] Provide `iban.ToISO20022Creditor()` / `iban.ToISO20022Debtor()` conversion helpers
-- [ ] Validate SEPA Instant Credit Transfer (SCT Inst) specific rules (amount ≤ 100,000 EUR, BIC mandatory)
+- [x] Validate SEPA Instant Credit Transfer (SCT Inst) specific rules (amount ≤ 100,000 EUR, BIC mandatory)
 
 ### SEPA Rulebook Updates
 
@@ -103,7 +103,7 @@
 
 - [ ] Profile `pkg/iban` hot paths with `pprof` and `go tool trace`
 - [ ] Investigate SIMD-accelerated MOD-97 for bulk calculations (Go assembly or CGo)
-- [ ] Add benchmark regression gate to CI (fail if >10% regression vs. baseline)
+- [x] Add benchmark regression gate to CI (fail if >10% regression vs. baseline)
 - [ ] Implement `sync.Pool` for `IBANInfo` struct reuse in hot paths
 - [ ] Publish detailed benchmark table in `docs/BENCHMARKING.md` (per country, cold/warm)
 
@@ -115,11 +115,11 @@
 
 ### API & Documentation
 
-- [ ] Complete and publish full `docs/api_reference.md` for all packages
-- [ ] Add runnable Go Playground examples to README for each identifier type
-- [ ] Generate `pkg.go.dev` documentation with rich package-level examples
-- [ ] Write a "Getting Started" guide for fintech engineers (target: 5-minute integration)
-- [ ] Add a `CHANGELOG.md` with semantic version history
+- [x] Complete and publish full `docs/api_reference.md` for all packages
+- [x] Add runnable Go Playground examples to README for each identifier type
+- [x] Generate `pkg.go.dev` documentation with rich package-level examples
+- [x] Write a "Getting Started" guide for fintech engineers (target: 5-minute integration)
+- [x] Add a `CHANGELOG.md` with semantic version history
 
 ### SDK / Client Libraries
 
@@ -129,16 +129,16 @@
 
 ### Testing & Quality
 
-- [ ] Add property-based tests using `pgregory.net/rapid` for IBAN generation + validation round-trips
+- [x] Add property-based tests using `pgregory.net/rapid` for normalization and parse/validate invariants
 - [ ] Achieve ≥ 90% test coverage across all `pkg/` packages (gate in CI)
-- [ ] Add corpus-based fuzz testing for all public `Validate()` and `Parse()` entrypoints
+- [x] Add corpus-based fuzz testing for all public `Validate()` and `Parse()` entrypoints
 - [ ] Integration test suite with real-world SWIFT IBAN registry test vectors
 - [ ] Test against official EPC SEPA test IBANs (published annually by EPC)
 
 ### Open Source & Community
 
-- [ ] Add `CONTRIBUTING.md` with contribution guidelines and ADR process
-- [ ] Create GitHub Issue templates (bug report, feature request, new country support)
+- [x] Add `CONTRIBUTING.md` with contribution guidelines and ADR process
+- [x] Create GitHub Issue templates (bug report, feature request, new country support)
 - [ ] Set up GitHub Discussions for RFC-style proposals
 - [ ] Publish library to `pkg.go.dev` under a stable `v1.x` tag
 - [ ] Reach out to `moov-io` / `gocardless` ecosystems for potential collaboration

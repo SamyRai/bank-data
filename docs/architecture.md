@@ -7,6 +7,7 @@
 ### 1. Public API
 - `pkg/financial`: canonical API for `Detect`, `Validate`, `Parse`, batch, and stream operations.
 - `pkg/iban`, `pkg/bic`, `pkg/sepa`: compatibility wrappers for legacy integrations.
+- `pkg/nationalaccount`, `pkg/vop`, `pkg/iso20022`: focused public packages for UK domestic accounts, VoP matching, and pain.001 subset support.
 
 ### 2. Identifier Modules
 - `internal/identifiers/{iban,bic,sepa,lei,isin,pan,vat}`
@@ -20,6 +21,7 @@
 - `internal/core/validation`: generic concurrent engine used by public facades.
 - `internal/countrymeta`: generated IBAN country metadata.
 - `internal/bankregistry`: explicit bank enrichment registry with source metadata.
+- `datasets/manifest.json`: dataset provenance/versioning policy for offline deterministic execution.
 
 ## Design Principles
 

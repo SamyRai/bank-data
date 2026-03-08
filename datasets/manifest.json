@@ -1,0 +1,33 @@
+{
+  "policy_version": 1,
+  "updated_at": "2026-03-08",
+  "datasets": [
+    {
+      "id": "iban-registry",
+      "path": "datasets/iban-registry.txt",
+      "format": "tab-separated text",
+      "source": "SWIFT IBAN Registry",
+      "version_date": "2026-03-07",
+      "license": "source terms apply",
+      "checksum": "untracked"
+    },
+    {
+      "id": "de-blz-bic",
+      "path": "datasets/blz_bic.csv",
+      "format": "fixed-width text",
+      "source": "Deutsche Bundesbank",
+      "version_date": "2026-03-07",
+      "license": "source terms apply",
+      "checksum": "untracked"
+    },
+    {
+      "id": "fixtures-fr-at-nl",
+      "path": "testdata/bankregistry/*.csv",
+      "format": "csv",
+      "source": "local deterministic fixtures",
+      "version_date": "2026-03-08",
+      "license": "MIT",
+      "checksum": "not_applicable"
+    }
+  ]
+}

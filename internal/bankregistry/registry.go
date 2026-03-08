@@ -2,8 +2,10 @@ package bankregistry
 
 import (
 	"bufio"
+	"encoding/csv"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 	"sync"
@@ -25,6 +27,20 @@ type Record struct {
 	BankCode    string
 	BIC         string
 	BankName    string
+}
+
+// CountryLoader loads bank records for one country into Registry.
+type CountryLoader interface {
+	Load(path string, registry *Registry, meta SourceMetadata) error
+}
+
+// CSVSchema describes column positions for CSV-based country datasets.
+type CSVSchema struct {
+	Delimiter      rune
+	HasHeader      bool
+	BankCodeColumn int
+	BICColumn      int
+	BankNameColumn int
 }
 
 // Registry stores bank lookup records by country and code.
@@ -123,4 +139,81 @@ func (r *Registry) Metadata(countryCode string) (SourceMetadata, error) {
 		return SourceMetadata{}, fmt.Errorf("no metadata for country %s", countryCode)
 	}
 	return meta, nil
+}
+
+// Countries returns sorted list of countries currently loaded in the registry.
+func (r *Registry) Countries() []string {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	out := make([]string, 0, len(r.records))
+	for cc := range r.records {
+		out = append(out, cc)
+	}
+	// small list; simple insertion sort avoids additional imports.
+	for i := 1; i < len(out); i++ {
+		for j := i; j > 0 && out[j] < out[j-1]; j-- {
+			out[j], out[j-1] = out[j-1], out[j]
+		}
+	}
+	return out
+}
+
+// LoadCSV loads country records from a deterministic local CSV fixture/file.
+func (r *Registry) LoadCSV(path, countryCode string, schema CSVSchema, meta SourceMetadata) error {
+	f, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = f.Close() }()
+
+	reader := csv.NewReader(f)
+	if schema.Delimiter != 0 {
+		reader.Comma = schema.Delimiter
+	}
+
+	row := 0
+	loaded := 0
+	for {
+		rec, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+		row++
+		if schema.HasHeader && row == 1 {
+			continue
+		}
+		maxCol := max(schema.BankCodeColumn, max(schema.BICColumn, schema.BankNameColumn))
+		if len(rec) <= maxCol {
+			continue
+		}
+
+		bankCode := strings.TrimSpace(rec[schema.BankCodeColumn])
+		bic := strings.TrimSpace(rec[schema.BICColumn])
+		name := strings.TrimSpace(rec[schema.BankNameColumn])
+		if bankCode == "" || bic == "" {
+			continue
+		}
+		r.Add(Record{
+			CountryCode: countryCode,
+			BankCode:    bankCode,
+			BIC:         bic,
+			BankName:    name,
+		})
+		loaded++
+	}
+	if loaded == 0 {
+		return fmt.Errorf("no valid %s records loaded from %s", countryCode, path)
+	}
+	r.SetSourceMetadata(countryCode, meta)
+	return nil
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }
