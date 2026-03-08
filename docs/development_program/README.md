@@ -21,13 +21,33 @@ Each objective has:
 9. [Objective 09: VoP Scoring Engine Maturity](09-vop-scoring-engine-maturity.md)
 10. [Objective 10: Ecosystem and Adoption](10-ecosystem-and-adoption.md)
 
+## Status Snapshot (2026-03-08)
+
+- Objective 01: complete (v1 contract + conformance suite merged in PR #9).
+- Objective 02: next critical objective; governs data provenance for Objectives 03/04/08.
+- Objectives 03-10: planned; sequencing below reflects current blockers/unblocks.
+
 ## Program Dependencies
 
-- Objective 01 is the contract baseline. Objectives 07 and 10 should not finalize before it is complete.
-- Objective 02 is required before large parts of Objectives 03 and 04.
+- Objective 01 is complete; Objectives 07 and 10 are now unblocked from contract stability concerns.
+- Objective 02 remains required before large parts of Objectives 03 and 04.
 - Objective 04 should feed tests into Objectives 06 and 08.
 - Objective 05 observability should be in place before high-throughput benchmarking in Objective 06.
-- Objective 09 should depend on Objective 04 test vectors and Objective 06 SLO measurement.
+- Objective 09 depends on Objective 04 test vectors and Objective 06 SLO measurement.
+
+## Dependency Matrix (Objectives 02-10)
+
+| Objective | Depends On | Status | Notes |
+| --- | --- | --- | --- |
+| 02 Dataset Governance | 01 (completed) | Ready | Highest priority next step; enables reproducible data foundation. |
+| 03 Country Coverage | 02 | Blocked | Avoid broad country rollout before manifest/schema/provenance gates are in place. |
+| 04 Vector + Conformance | 02 | Partially blocked | Can add local vectors now; official/source-governed expansion should follow 02. |
+| 05 Observability | 01 (completed) | Ready | Can proceed independently of dataset expansion. |
+| 06 Performance SLOs | 05, 04 | Sequenced | Baselines exist; final SLO enforcement should include observability + richer vectors. |
+| 07 CLI/HTTP/gRPC | 01 (completed) | Ready | Contract lock is in place; wrappers can align to stable API surface. |
+| 08 Security + Supply Chain | 04, 02 | Partially ready | CI baseline is stable; deeper hardening should consume governed datasets + vectors. |
+| 09 VoP Maturity | 04, 06 | Blocked | Needs vector depth and measurable performance budgets first. |
+| 10 Ecosystem + Adoption | 01, 07 | Sequenced | Docs/process can advance now; broader adoption push should follow integration surfaces. |
 
 ## Current Baseline Anchors
 

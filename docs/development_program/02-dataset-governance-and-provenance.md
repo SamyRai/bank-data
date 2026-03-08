@@ -9,7 +9,13 @@ Validation quality now depends on offline datasets (`datasets/`, generated count
 - Dataset manifest exists: `datasets/manifest.json`.
 - Generated IBAN metadata is produced into `internal/countrymeta/registry.go`.
 - Registry loaders exist in `internal/bankregistry/registry.go` with per-country metadata fields.
+- Manifest entries currently include non-verifiable checksum placeholders (`untracked` / `not_applicable`).
 - No strict schema/version enforcement exists for manifests and fixtures.
+
+## Dependency Position
+
+- Upstream: Objective 01 (v1 API contract) is complete.
+- Downstream: Objective 02 should be treated as a prerequisite gate for Objectives 03 and 04, and a data-trust input for Objective 08.
 
 ## Plan
 
