@@ -1,33 +1,39 @@
 {
   "policy_version": 1,
-  "updated_at": "2026-03-08",
+  "updated_at": "2026-03-08T12:00:00Z",
   "datasets": [
     {
       "id": "iban-registry",
       "path": "datasets/iban-registry.txt",
       "format": "tab-separated text",
       "source": "SWIFT IBAN Registry",
+      "source_url": "https://www.swift.com/standards/data-standards/iban",
       "version_date": "2026-03-07",
       "license": "source terms apply",
-      "checksum": "untracked"
+      "checksum": "9b6a205fa9b48f701f086ecef11e9dd99b1bed9261cb9f50e5ea6906f0855732",
+      "generation_timestamp": "2026-03-08T12:00:00Z"
     },
     {
       "id": "de-blz-bic",
       "path": "datasets/blz_bic.csv",
       "format": "fixed-width text",
       "source": "Deutsche Bundesbank",
+      "source_url": "https://www.bundesbank.de/en/tasks/payment-systems/services-for-banks-and-other-payment-service-providers/bank-sort-codes-615696",
       "version_date": "2026-03-07",
       "license": "source terms apply",
-      "checksum": "untracked"
+      "checksum": "90161201ea79892b7311bac9a29d57dac5a794780708f9c68215a4be12adc598",
+      "generation_timestamp": "2026-03-08T12:00:00Z"
     },
     {
       "id": "fixtures-fr-at-nl",
       "path": "testdata/bankregistry/*.csv",
       "format": "csv",
       "source": "local deterministic fixtures",
+      "source_url": "local",
       "version_date": "2026-03-08",
       "license": "MIT",
-      "checksum": "not_applicable"
+      "checksum": "f6a4886b5426491632778502854e0464f7858910670016f74dfd95f87b0710d8",
+      "generation_timestamp": "2026-03-08T12:00:00Z"
     }
   ]
 }

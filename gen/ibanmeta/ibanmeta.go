@@ -5,6 +5,7 @@ package ibanmeta
 
 import (
 	"fmt"
+	"go/format"
 	"os"
 	"regexp"
 	"sort"
@@ -179,7 +180,13 @@ func GenerateRegistry(txtPath string) ([]byte, error) {
 		buf.WriteString("\t\t},\n")
 	}
 	buf.WriteString("\t}\n}\n")
-	return []byte(buf.String()), nil
+
+	formatted, err := format.Source([]byte(buf.String()))
+	if err != nil {
+		return nil, fmt.Errorf("failed to format generated code: %v", err)
+	}
+
+	return formatted, nil
 }
 
 // swiftToGoRegex converts SWIFT/IBAN regex notation to Go regex.
