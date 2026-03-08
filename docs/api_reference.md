@@ -1,72 +1,50 @@
-# API Reference: IBAN Package
+# API Reference: Financial Package
 
-The `iban` package provides a unified interface for validating, parsing, and detecting International Bank Account Numbers.
+`pkg/financial` is the canonical API for identifier detection, validation, and parsing.
 
-## The IBAN Service
-
-The `Service` is the central entry point. For optimal performance, initialize it once and reuse it across your application.
+## Service
 
 ```go
-import "github.com/SamyRai/bank-data/pkg/iban"
+import "github.com/SamyRai/bank-data/pkg/financial"
 
-// Initialize with default components by passing nil
-svc := iban.NewService(nil, nil, nil, nil)
+svc := financial.NewService()
 ```
 
-### Methods
+### `Detect(input string) (IdentifierType, error)`
+Auto-detects identifier type by running deterministic candidate checks and checksum validation.
 
-#### `Validate(ibanStr string) error`
-Validates an IBAN string for character set, length, and MOD-97 checksum. Returns a typed `*iban.IBANError` if invalid.
+### `Validate(input string, hint IdentifierType) (ValidationReport, error)`
+Validates `input` as `hint`. If `hint == ""`, type is auto-detected first.
 
-#### `Parse(ibanStr string) (*IBANInfo, error)`
-Deconstructs a normalized IBAN into its constituent fields (Country Code, Bank Code, Account Number, etc.).
+### `Parse(input string, hint IdentifierType) (ParsedIdentifier, error)`
+Validates and returns parsed fields (`map[string]string`) for the chosen identifier type.
 
-#### `Detect(ibanStr string) (*IBANStructure, error)`
-Retrieves metadata for a specific country's IBAN format, including the expected length and structure template.
+### `ValidateBatch(ctx, inputs, hint)` and `StreamValidate(ctx, seq, hint)`
+Concurrent validation helpers built on the shared core engine.
 
----
+## Types
 
-## Errors and Status Codes
+### `IdentifierType`
+- `IdentifierIBAN`
+- `IdentifierBIC`
+- `IdentifierSEPACreditor`
+- `IdentifierLEI`
+- `IdentifierISIN`
+- `IdentifierPAN`
+- `IdentifierVAT`
 
-The package uses a structured `IBANError` type for precise error handling.
+### `ValidationReport`
+- `Type IdentifierType`
+- `Input string`
+- `Normalized string`
+- `Valid bool`
+- `Error *ValidationError`
 
-| Error Code | Constant | Description |
-| :--- | :--- | :--- |
-| `invalid_chars` | `ErrCodeInvalidChars` | Input contains characters outside of [A-Z0-9]. |
-| `wrong_length` | `ErrCodeWrongLength` | Length does not match country meta or limits. |
-| `checksum_failed` | `ErrCodeChecksum` | The MOD-97 checksum validation failed. |
-| `unsupported_country` | `ErrCodeUnsupportedCountry` | The ISO country code is not in the registry. |
+### `ParsedIdentifier`
+- `Type IdentifierType`
+- `Normalized string`
+- `Fields map[string]string`
 
-### Idiomatic Error Handling
-```go
-err := svc.Validate(input)
-if err != nil {
-	var ibanErr *iban.IBANError
-	if errors.As(err, &ibanErr) {
-		fmt.Printf("Validation failed: %s (Code: %s)\n", ibanErr.Message, ibanErr.Code)
-	}
-}
-```
+## Compatibility Packages
 
----
-
-## Advanced Usage
-
-### The `Must` Wrapper
-Use the `Must()` wrapper in environments where an invalid IBAN should trigger a panic (e.g., CLI tools or during migration initialization).
-
-```go
-// Panics if the IBAN is invalid
-svc.Must().Validate("DE89370400440532013000")
-
-// Returns IBANInfo directly, panics on error
-info := svc.Must().Parse("DE89370400440532013000")
-```
-
-### Bank Information Enrichment
-Combine `IBANInfo` with a `BankBICMap` to retrieve detailed bank metadata.
-
-```go
-// Enrich parsed info with bank/branch details
-bankInfo, err := iban.EnrichWithBankInfo(info, bicMap)
-```
+`pkg/iban`, `pkg/bic`, and `pkg/sepa` are retained as compatibility layers. New development should target `pkg/financial`.

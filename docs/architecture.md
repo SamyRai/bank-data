@@ -1,39 +1,29 @@
 # Architecture Overview
 
-The `bank-data` library is designed for high-integrity financial data processing, adhering to clean architecture and modular design.
+`bank-data` now follows a single public-facade model: all identifier workflows go through `pkg/financial`.
 
-## Design Philosophy
+## High-Level Layout
 
-- **Clean Architecture**: Separation between public interfaces/implementations (`pkg/`) and internal meta-engines (`internal/`).
-- **Extensibility**: Uses Registry and Strategy patterns to support new financial data types (BIC, VAT, etc.) without breaking changes.
-- **Precision**: Algorithmic accuracy over simplicity, using streaming MOD-97 for IBAN validation to avoid numeric overflows.
+### 1. Public API
+- `pkg/financial`: canonical API for `Detect`, `Validate`, `Parse`, batch, and stream operations.
+- `pkg/iban`, `pkg/bic`, `pkg/sepa`: compatibility wrappers for legacy integrations.
 
----
+### 2. Identifier Modules
+- `internal/identifiers/{iban,bic,sepa,lei,isin,pan,vat}`
+- Each module owns four responsibilities only:
+  - normalize input
+  - detect candidate shape
+  - validate semantics/checksum
+  - parse structured fields
 
-## Component Breakdown
+### 3. Shared Core Runtime
+- `internal/core/validation`: generic concurrent engine used by public facades.
+- `internal/countrymeta`: generated IBAN country metadata.
+- `internal/bankregistry`: explicit bank enrichment registry with source metadata.
 
-### 1. Public API & Core (`pkg/`)
-- **`pkg/iban`**: Primary entry point. Hosts the `Service` facade, core validation logic (including the streaming checksum), and the BBAN parser.
-- **`pkg/validation`**: Generic interfaces and the `ValidationRegistry` for type-agnostic processing.
-- **`pkg/bank`**: Shared types for bank and branch information.
+## Design Principles
 
-### 2. Implementation Layer (`internal/`)
-- **`internal/countrymeta`**: The metadata engine, containing format rules for 80+ countries.
-- **`internal/bic/map`**: Logic for mapping national bank codes to global BICs.
-- **`internal/log`**: A dependency-free, structured logger used throughout the library.
-
-### 3. Tooling and Generation (`gen/`)
-- **`gen/cmd/gen_registry`**: Automated tool that transforms dataset specifications into Go metadata, ensuring the registry remains up-to-date with minimal manual effort.
-
----
-
-## Technical Patterns
-
-### Registry Pattern
-The `ValidationRegistry` decouples the library from specific data types. Clients can register custom validators, allowing the core service to handle diverse financial formats (IBAN, BIC, VAT, etc.) through a unified interface.
-
-### Strategy Pattern
-Operations like validation and parsing are defined via interfaces (e.g., `iban.Validator`). This enables easy swapping of implementations—for example, switching from a single IBAN validator to a high-concurrency batch validator—without affecting client code.
-
-### Service Facade
-The `iban.Service` simplifies complex workflows by orchestrating multiple internal components (parsers, registries, detectors) into a single, cohesive API.
+- Single ownership per module (SRP): one identifier module, one reason to change.
+- Typed boundaries: no `map[string]any`-style public validator registry.
+- Deterministic behavior: no implicit cwd-based dataset loading in core validation paths.
+- Compatibility by adapter: old package entrypoints wrap current internals rather than owning new logic.

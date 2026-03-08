@@ -18,13 +18,16 @@ The `bank-data` project is committed to providing a secure and reliable library 
 
 ## Best Practices for Consumers
 
-1.  **Normalize Early**: Always pass raw input through the `Service.Validate` method before storing or processing it further.
-2.  **Use `Must()` with Caution**: The `Must()` wrapper panics on error. Use it only in environments where recovery is possible or where a failure is considered critical (e.g., initialization scripts).
+1. **Normalize Early**: Always pass raw input through `financial.Service.Validate` before storing or processing it further.
+2. **Prefer Explicit Hints**: When identifier type is known, pass a `IdentifierType` hint to reduce ambiguity and avoid accidental auto-detection drift.
+3. **Use `Must()` with Caution**: The `Must()` wrappers panic on error and should be limited to scripts/tooling where panic is acceptable.
 
 ---
 
 ## Reporting Vulnerabilities
 
-If you discover a security vulnerability, please do NOT create a public issue. Instead, report it privately via [security@example.com] (update this with your real security contact).
+If you discover a security vulnerability, do **not** open a public issue.
+Please use GitHub private vulnerability reporting:
+- [Report a vulnerability](https://github.com/SamyRai/bank-data/security/advisories/new)
 
 We aim to acknowledge all security reports within 48 hours and provide a fix or mitigation path within 1 week for critical issues.

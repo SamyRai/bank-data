@@ -1,6 +1,6 @@
 # bank-data
 
-A high-performance Go library for IBAN validation, parsing, and structure detection. Built for financial systems that require precision, reliability, and extensibility.
+Go library for validating and parsing financial identifiers with a canonical `pkg/financial` API.
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/SamyRai/bank-data.svg)](https://pkg.go.dev/github.com/SamyRai/bank-data)
 [![Test & Coverage](https://github.com/SamyRai/bank-data/actions/workflows/test.yml/badge.svg)](https://github.com/SamyRai/bank-data/actions/workflows/test.yml)
@@ -19,39 +19,42 @@ package main
 
 import (
 	"fmt"
-	"github.com/SamyRai/bank-data/pkg/iban"
+
+	"github.com/SamyRai/bank-data/pkg/financial"
 )
 
 func main() {
-	// Initialize the service with default components
-	svc := iban.NewService(nil, nil, nil, nil)
+	svc := financial.NewService()
 
-	// Validate an IBAN
-	input := "DE89370400440532013000"
-	if err := svc.Validate(input); err != nil {
-		fmt.Printf("Invalid IBAN: %v\n", err)
+	report, err := svc.Validate("DE89370400440532013000", financial.IdentifierIBAN)
+	if err != nil {
+		fmt.Printf("invalid: %v\n", err)
 		return
 	}
+	fmt.Printf("type=%s normalized=%s valid=%v\n", report.Type, report.Normalized, report.Valid)
 
-	// Parse IBAN components
-	info, _ := svc.Parse(input)
-	fmt.Printf("Country: %s, Bank Code: %s\n", info.CountryCode, info.BankCode)
+	parsed, _ := svc.Parse("US0378331005", financial.IdentifierISIN)
+	fmt.Printf("ISIN country=%s nsin=%s\n", parsed.Fields["country_code"], parsed.Fields["nsin"])
 }
 ```
 
-## Core Features
+## Supported Identifier Types
 
-- **Robust Validation**: Streaming MOD-97 algorithm prevents overflows and ensures constant-time performance.
-- **Deep Parsing**: Extracts Country Code, Bank Code, and Account Numbers with precision.
-- **Global Support**: Pre-configured with metadata for 80+ countries, easily extensible via registry.
-- **Developer First**: Structured logging, typed errors, and zero external dependencies in the core.
-- **Security Focused**: Input length capping (34 chars) and strict character set enforcement.
+- `IBAN`
+- `BIC`
+- `SEPA_CREDITOR_ID`
+- `LEI`
+- `ISIN`
+- `PAN`
+- `VAT` (initial checks for `DE`, `FR`, `NL`, `IT`, `ES`)
 
 ## Project Structure
 
-- `pkg/iban`: Public API surface (Service, Interfaces, Types).
-- `internal/`: Component implementations and metadata registry.
-- `gen/`: Tooling for automated registry maintenance.
+- `pkg/financial`: Canonical public API (`Detect`, `Validate`, `Parse`, batch/stream).
+- `internal/identifiers/*`: Per-identifier normalization, detection, validation, parsing.
+- `internal/core/validation`: Shared concurrent validation engine.
+- `internal/bankregistry`: Explicit, deterministic bank enrichment registry.
+- `pkg/iban`, `pkg/bic`, `pkg/sepa`: Compatibility packages (legacy entrypoints).
 
 ## Documentation
 
@@ -61,7 +64,7 @@ func main() {
 
 ## Contributing
 
-Contributions are welcome. See [TODO.md](TODO.md) and [FUTURE_FEATURES.md](FUTURE_FEATURES.md) for current priorities and upcoming developments.
+Contributions are welcome. See [TODO.md](TODO.md) and [FUTURE_FEATURES.md](FUTURE_FEATURES.md) for open priorities.
 
 ## License
 
