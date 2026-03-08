@@ -6,9 +6,11 @@
 ---
 
 ## 🏁 Milestone 1 — Country Coverage & Data Expansion
+
 **Target:** Q2 2026 — _Broaden the library's utility across the full EU/SEPA geography_
 
 ### Bank Code Registry Expansion
+
 - [ ] **FR (France)** — BIC mapping from Banque de France directory
 - [ ] **AT (Austria)** — BLZ-to-BIC lookup from Österreichische Nationalbank dataset
 - [ ] **NL (Netherlands)** — Dutch bank code (Bankrekening) dataset integration
@@ -23,6 +25,7 @@
 - [ ] Write per-country integration tests with real-world IBAN samples
 
 ### IBAN Format Extensions
+
 - [ ] Validate IBAN structure for all 80 registered SWIFT country definitions
 - [ ] Cross-verify registry against the latest EPC SEPA Country Rulebook (update cycle: annually)
 - [ ] Add fuzzy-match correction suggestions (e.g., `GB29 NWBK...` → detect transposed digits)
@@ -30,9 +33,11 @@
 ---
 
 ## 🏁 Milestone 2 — Financial Identifier Suite
+
 **Target:** Q3 2026 — _Expand from IBAN-only to a complete financial identifier toolkit_
 
 ### New Data Types (from `FUTURE_FEATURES.md`)
+
 - [x] **VAT Number (Phase A/B initial)** — Country routing + checksums for `DE`, `FR`, `NL`, `IT`, `ES`
 - [x] **LEI (Legal Entity Identifier)** — MOD-97-10 checksum per ISO 17442
 - [x] **ISIN** — Luhn checksum + ISO 6166 country prefix validation
@@ -41,6 +46,7 @@
 - [x] **SEPA Creditor ID** — MOD-97 check digits
 
 ### Unified `pkg/financial` Validator API
+
 - [x] Implement canonical `financial.Service` facade (`Detect`, `Validate`, `Parse`)
 - [x] Implement `financial.Detect(input string) (Type, error)` — auto-detect identifier type
 - [x] Expose typed `financial.Validate(input string, hint Type) (ValidationReport, error)`
@@ -49,13 +55,15 @@
 ---
 
 ## 🏁 Milestone 3 — SEPA & Regulatory Compliance
+
 **Target:** Q3–Q4 2026 — _Stay ahead of mandatory EU payment regulation changes_
 
 > **⚠️ REGULATORY DEADLINE: October 9, 2025** — SEPA Verification of Payee (VoP) became mandatory for
 > Eurozone PSPs. Non-Eurozone deadline: **July 9, 2027**. Integrate support now for downstream users.
 
 ### Verification of Payee (VoP) Support
-- [ ] Design `pkg/vop` package with `MatchRequest` / `MatchResponse` types  
+
+- [ ] Design `pkg/vop` package with `MatchRequest` / `MatchResponse` types
   - Response categories: `Match`, `CloseMatch`, `NoMatch`, `Unavailable`
 - [ ] Implement name matching heuristics (levenshtein, diacritic normalization, legal suffix stripping)
 - [ ] Provide an interface `vop.Verifier` for integrating with bank API backends
@@ -63,6 +71,7 @@
 - [ ] Add fuzzy name matching benchmarks (target < 1ms per check)
 
 ### ISO 20022 Alignment
+
 - [ ] Parse and validate ISO 20022 `pain.001` payment initiation messages (SCT schema)
 - [ ] Support ISO 20022 structured address fields (mandatory from **November 2026**)
   - Fields: `TwnNm`, `Ctry`, `PstCd` + max 2 × 70-char address lines
@@ -70,6 +79,7 @@
 - [ ] Validate SEPA Instant Credit Transfer (SCT Inst) specific rules (amount ≤ 100,000 EUR, BIC mandatory)
 
 ### SEPA Rulebook Updates
+
 - [ ] Track and implement new EPC SEPA Rulebook version (updated annually each November)
 - [ ] Support `Alias/Proxy` IBAN derivation field (email / phone → IBAN lookup interface)
 - [ ] Add `IsSEPAInstant(countryCode string) bool` (not all SEPA countries support SCT Inst)
@@ -77,9 +87,11 @@
 ---
 
 ## 🏁 Milestone 4 — Performance & Scalability
+
 **Target:** Q4 2026 — _Production-grade throughput for high-volume financial systems_
 
 ### Batch Processing Engine (`pkg/batch`)
+
 - [ ] Implement `batch.Processor` with configurable worker pool size
 - [ ] Use Go channels + `sync.WaitGroup` for concurrent validation pipeline
 - [ ] Support streaming I/O: `io.Reader` CSV input → `io.Writer` JSON/CSV output
@@ -88,6 +100,7 @@
 - [ ] Lazy-load datasets in batch mode to cap memory footprint under 50 MB
 
 ### Core Performance Improvements
+
 - [ ] Profile `pkg/iban` hot paths with `pprof` and `go tool trace`
 - [ ] Investigate SIMD-accelerated MOD-97 for bulk calculations (Go assembly or CGo)
 - [ ] Add benchmark regression gate to CI (fail if >10% regression vs. baseline)
@@ -97,9 +110,11 @@
 ---
 
 ## 🏁 Milestone 5 — Developer Experience & Ecosystem
+
 **Target:** Q1 2027 — _Make bank-data the go-to library for Go financial developers_
 
 ### API & Documentation
+
 - [ ] Complete and publish full `docs/api_reference.md` for all packages
 - [ ] Add runnable Go Playground examples to README for each identifier type
 - [ ] Generate `pkg.go.dev` documentation with rich package-level examples
@@ -107,11 +122,13 @@
 - [ ] Add a `CHANGELOG.md` with semantic version history
 
 ### SDK / Client Libraries
+
 - [ ] Evaluate gRPC service wrapper for `bank-data` (for polyglot environments)
 - [ ] Provide a REST microservice Docker image (`bank-data-api`) for non-Go users
 - [ ] Publish pre-built binaries for the `gen/` registry tool via GitHub Releases
 
 ### Testing & Quality
+
 - [ ] Add property-based tests using `pgregory.net/rapid` for IBAN generation + validation round-trips
 - [ ] Achieve ≥ 90% test coverage across all `pkg/` packages (gate in CI)
 - [ ] Add corpus-based fuzz testing for all public `Validate()` and `Parse()` entrypoints
@@ -119,6 +136,7 @@
 - [ ] Test against official EPC SEPA test IBANs (published annually by EPC)
 
 ### Open Source & Community
+
 - [ ] Add `CONTRIBUTING.md` with contribution guidelines and ADR process
 - [ ] Create GitHub Issue templates (bug report, feature request, new country support)
 - [ ] Set up GitHub Discussions for RFC-style proposals
@@ -128,27 +146,32 @@
 ---
 
 ## 🏁 Milestone 6 — Enterprise & Advanced Features
+
 **Target:** Q2–Q3 2027 — _Capabilities needed by fintechs and banks in production_
 
 ### Open Banking Integration
+
 - [ ] Design `pkg/openbanking` with PSD2/PSD3-compatible account lookup interface
 - [ ] Implement GoCardless (Nordigen) Open Banking API adapter for account verification
 - [ ] Support pluggable bank verification backends (Plaid, TrueLayer, etc.)
 - [ ] Provide rate-limiter-aware HTTP client wrappers for external API calls
 
 ### Bank Information Enrichment
+
 - [ ] Extend IBAN parser to resolve bank metadata: name, address, BIC, phone
 - [ ] Integrate with public SWIFT BIC directory (via licensed dataset or scrape-free API)
 - [ ] Optional cache layer for bank metadata (TTL-based, Redis-injectable interface)
 - [ ] Support reverse lookup: BIC → IBAN country + bank code
 
 ### Fraud & Risk Signals
+
 - [ ] `risk.Score(iban string) (RiskSignal, error)` — heuristic-based risk indicator
   - Signals: newly-registered bank code, inactive country, structured as known fraud pattern
 - [ ] VoP name-match score as a numeric confidence value (0–1 range)
 - [ ] Provide integration hooks for downstream fraud detection pipelines
 
 ### Observability & Reliability
+
 - [ ] Add structured `slog`-compatible logging throughout all packages
 - [ ] Expose `prometheus`-compatible metrics hook for validation throughput and error rates
 - [ ] Implement per-country circuit-breaker for external bank registry fetches
@@ -157,6 +180,7 @@
 ---
 
 ## 📌 Ongoing / Evergreen Tasks
+>
 > These tasks repeat on a regular cadence and are never "done"
 
 - [ ] **Annual** — Update country IBAN registry against latest SWIFT/EPC data (every November)
@@ -169,6 +193,7 @@
 ---
 
 ## 🔭 Research Queue
+>
 > Ideas requiring investigation before commitment
 
 - [ ] **R1** — Evaluate `wasm` compilation target for browser-side IBAN validation
