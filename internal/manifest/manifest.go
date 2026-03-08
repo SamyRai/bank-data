@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -136,7 +137,7 @@ func CalculateChecksum(pattern string) (string, error) {
 		if _, err := io.Copy(hash, file); err != nil {
 			closeErr := file.Close()
 			if closeErr != nil {
-				return "", fmt.Errorf("copy failed: %w (close failed: %v)", err, closeErr)
+				return "", fmt.Errorf("copy and close failed: %w", errors.Join(err, closeErr))
 			}
 			return "", err
 		}
