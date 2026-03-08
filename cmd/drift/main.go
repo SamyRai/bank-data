@@ -37,7 +37,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err := os.WriteFile("drift_report.json", reportJSON, 0644); err != nil {
+	if err := os.WriteFile("drift_report.json", reportJSON, 0600); err != nil {
 		fmt.Printf("Error writing report file: %v\n", err)
 		os.Exit(1)
 	}

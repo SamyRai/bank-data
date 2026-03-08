@@ -2,7 +2,9 @@ package drift
 
 import (
 	"bufio"
+	"fmt"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 )
@@ -70,7 +72,13 @@ func CalculateDrift(oldData, newData map[string]map[string]bool) DriftReport {
 }
 
 func ParseCSV(path string, defaultCountry string) (map[string]map[string]bool, error) {
-	file, err := os.Open(path)
+	safePath, err := sanitizeRelativePath(path)
+	if err != nil {
+		return nil, err
+	}
+
+	// #nosec G304 -- input path is sanitized to a repository-relative path.
+	file, err := os.Open(safePath)
 	if err != nil {
 		return nil, err
 	}
@@ -113,4 +121,21 @@ func ParseCSV(path string, defaultCountry string) (map[string]map[string]bool, e
 	}
 
 	return data, scanner.Err()
+}
+
+func sanitizeRelativePath(path string) (string, error) {
+	trimmed := strings.TrimSpace(path)
+	if trimmed == "" {
+		return "", fmt.Errorf("path is empty")
+	}
+
+	clean := filepath.Clean(trimmed)
+	if filepath.IsAbs(clean) {
+		return "", fmt.Errorf("absolute paths are not allowed")
+	}
+	if clean == "." || clean == ".." || strings.HasPrefix(clean, ".."+string(os.PathSeparator)) {
+		return "", fmt.Errorf("path must stay within repository")
+	}
+
+	return clean, nil
 }

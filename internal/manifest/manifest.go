@@ -105,6 +105,10 @@ func ValidateManifest(data []byte, calculateChecksumFunc func(string) (string, e
 }
 
 func CalculateChecksum(pattern string) (string, error) {
+	if err := validateSafeRelativePath(pattern); err != nil {
+		return "", fmt.Errorf("invalid checksum path pattern: %w", err)
+	}
+
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
 		return "", err
@@ -117,20 +121,47 @@ func CalculateChecksum(pattern string) (string, error) {
 	// For consistent hashing of multiple files, sort by path and include file boundaries.
 	hash := sha256.New()
 	for _, match := range matches {
+		if err := validateSafeRelativePath(match); err != nil {
+			return "", fmt.Errorf("invalid matched dataset path %q: %w", match, err)
+		}
+
 		_, _ = io.WriteString(hash, match)
 		_, _ = hash.Write([]byte{0})
 
+		// #nosec G304 -- match values are constrained to sanitized repository-relative paths.
 		file, err := os.Open(match)
 		if err != nil {
 			return "", err
 		}
 		if _, err := io.Copy(hash, file); err != nil {
-			file.Close()
+			closeErr := file.Close()
+			if closeErr != nil {
+				return "", fmt.Errorf("copy failed: %v (close failed: %v)", err, closeErr)
+			}
 			return "", err
 		}
-		file.Close()
+		if err := file.Close(); err != nil {
+			return "", fmt.Errorf("close failed for %s: %w", match, err)
+		}
 		_, _ = hash.Write([]byte{0})
 	}
 
 	return hex.EncodeToString(hash.Sum(nil)), nil
+}
+
+func validateSafeRelativePath(path string) error {
+	trimmed := strings.TrimSpace(path)
+	if trimmed == "" {
+		return fmt.Errorf("path is empty")
+	}
+
+	clean := filepath.Clean(trimmed)
+	if filepath.IsAbs(clean) {
+		return fmt.Errorf("absolute paths are not allowed")
+	}
+	if clean == "." || clean == ".." || strings.HasPrefix(clean, ".."+string(os.PathSeparator)) {
+		return fmt.Errorf("path must stay within repository")
+	}
+
+	return nil
 }
