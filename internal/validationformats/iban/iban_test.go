@@ -3,7 +3,7 @@ package iban_test
 import (
 	"testing"
 
-	ibanimpl "github.com/SamyRai/bank-data/internal/iban"
+	ibanimpl "github.com/SamyRai/bank-data/internal/validationformats/iban"
 )
 
 func TestValidator_Validate(t *testing.T) {

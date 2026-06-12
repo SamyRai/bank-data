@@ -29,7 +29,7 @@ Basic validation:
 ```go
 import (
     "github.com/SamyRai/bank-data/pkg/iban"
-    internal "github.com/SamyRai/bank-data/internal/iban"
+    internal "github.com/SamyRai/bank-data/internal/validationformats/iban"
 )
 
 service := iban.NewService(
@@ -57,13 +57,15 @@ if err == nil {
 
 ## Features
 
-- **IBAN Validation**: Format, length, and checksum for all major countries (including Denmark)
-- **IBAN Parsing**: Extracts country code, bank code, account number, and check digits
-- **Bank Directory Lookup**: Enriches parsed IBANs with BIC and bank name (DE, extensible)
-- **Typed Error Handling**: Domain-specific errors for all validation outcomes
-- **Structured Logging**: For validation and parsing events
-- **Batch & Fuzz Testing**: High coverage, edge cases, and fuzzing
-- **Extensible Validation**: Register custom validators for new data types
+- **Expanded Country Registry**: Supports all major EU/SEPA and a broad set of IBAN countries via `countrymeta.Registry`.
+- **Robust IBAN Validation**: Streaming MOD-97 algorithm, format, length, and checksum validation for all supported countries.
+- **Comprehensive Testing**: Table-driven, fuzz, and edge case tests for reliability and coverage.
+- **Unified Public API**: Single facade (`iban.Service`) with dependency injection for validation, parsing, and enrichment.
+- **Typed Error Handling**: Domain-specific, exported error types for all validation and parsing outcomes.
+- **Security & Compliance**: Input capped at 34 characters, constant-time check digit comparison, and thorough edge case coverage.
+- **Bank Directory Enrichment**: IBAN parsing extracts bank code and supports enrichment (e.g., DE BLZ→BIC lookup).
+- **Documentation & CI**: Production-ready documentation, MIT license, and multi-platform/multi-version CI workflows.
+- **Refactored Abstractions**: Removed redundant IBANRegistrySource in favor of general encoder/decoder for maintainability.
 
 ## Supported Countries
 
@@ -96,10 +98,24 @@ go test ./...
 
 See [FUTURE_FEATURES.md](FUTURE_FEATURES.md) and [TODO.md](TODO.md) for planned features and progress tracking.
 
-## Contributing
+## Contribution Guidelines
 
-Contributions are welcome! See documentation and TODOs for guidance on project structure and priorities.
+- Follow SOLID and clean architecture principles.
+- Use dependency injection and keep cyclomatic complexity low (≤ 10 per function).
+- Group code by feature, then by type.
+- Add comprehensive unit tests for all new code.
+- Use TODO comments for improvements, with context, priority, and estimated effort.
+- Update TODO.md after each milestone.
+- Validate all changes with tests and CI before submitting PRs.
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+## Architecture & Design Principles
+
+- **Clean Architecture**: Separation of concerns, interface-driven, and feature-first organization.
+- **SOLID Principles**: Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion.
+- **Dependency Injection**: All core services accept dependencies via constructors for loose coupling and testability.
+- **Error Handling**: Domain-specific error types for validation, parsing, and enrichment. All errors are typed and documented.
+- **Logging & Monitoring**: Structured logging for all validation and parsing events. Extendable for external monitoring.

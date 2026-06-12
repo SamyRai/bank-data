@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	internal "github.com/SamyRai/bank-data/internal/iban"
+	internal "github.com/SamyRai/bank-data/internal/validationformats/iban"
 	"github.com/SamyRai/bank-data/pkg/iban"
 	"github.com/SamyRai/bank-data/pkg/validation"
 )

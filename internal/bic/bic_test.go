@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	bicmap "github.com/SamyRai/bank-data/internal/bic/map"
+	bicvalidator "github.com/SamyRai/bank-data/internal/validationformats/bic"
 )
 
 func TestValidate(t *testing.T) {
@@ -24,7 +25,7 @@ func TestValidate(t *testing.T) {
 		{"DEUTDEFF1234", false, "too long"},
 	}
 	for _, c := range cases {
-		err := Validate(c.bic)
+		err := bicvalidator.Validate(c.bic)
 		if (err == nil) != c.ok {
 			t.Errorf("%s: Validate(%q) = %v, want ok=%v", c.name, c.bic, err, c.ok)
 		}
@@ -38,7 +39,7 @@ func TestValidate_WithBankBICMap(t *testing.T) {
 			"PBNK": bicmap.BankBICEntry{BankCode: "PBNK", BIC: "PBNKDEFF", BankName: "Postbank Ndl Deutsche Bank", Country: "DE"},
 		},
 	}
-	SetBankBICMap(m)
+	bicvalidator.SetBankBICMap(m)
 
 	cases := []struct {
 		bic  string
@@ -52,7 +53,7 @@ func TestValidate_WithBankBICMap(t *testing.T) {
 		{"PBNKDEFG", false, "valid format, not in map or directory"},
 	}
 	for _, c := range cases {
-		err := Validate(c.bic)
+		err := bicvalidator.Validate(c.bic)
 		if (err == nil) != c.ok {
 			t.Errorf("%s: Validate(%q) = %v, want ok=%v", c.name, c.bic, err, c.ok)
 		}

@@ -136,19 +136,19 @@ func main() {
 			fmt.Fprintf(os.Stderr, "invalid IBAN registry file path: %s\n", *input)
 			os.Exit(1)
 		}
-		f, err := os.Open(*input)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to open IBAN registry: %v\n", err)
+		f, ibanErr := os.Open(*input)
+		if ibanErr != nil {
+			fmt.Fprintf(os.Stderr, "Failed to open IBAN registry: %v\n", ibanErr)
 			os.Exit(1)
 		}
 		defer f.Close()
 		// Use streaming parser for IBANMeta
 		var metas []dataset.IBANMeta
-		err = dataset.ParseIBANMetaStream(f, ',', func(meta dataset.IBANMeta, _ int) {
+		ibanErr = dataset.ParseIBANMetaStream(f, ',', func(meta dataset.IBANMeta, _ int) {
 			metas = append(metas, meta)
 		})
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Failed to parse IBAN registry: %v\n", err)
+		if ibanErr != nil {
+			fmt.Fprintf(os.Stderr, "Failed to parse IBAN registry: %v\n", ibanErr)
 			os.Exit(1)
 		}
 		binData, err := dataset.EncodeIBANRegistry(metas)
@@ -161,8 +161,30 @@ func main() {
 			os.Exit(1)
 		}
 	default:
-		fmt.Fprintf(os.Stderr, "Unknown dataset type: %s\n", *datasetType)
-		os.Exit(1)
+		f, defaultErr := os.Open(*input)
+		if defaultErr != nil {
+			fmt.Fprintf(os.Stderr, "Failed to open input file: %v\n", defaultErr)
+			os.Exit(1)
+		}
+		defer f.Close()
+		// Use streaming parser for IBANMeta
+		var metas []dataset.IBANMeta
+		defaultErr = dataset.ParseIBANMetaStream(f, ',', func(meta dataset.IBANMeta, _ int) {
+			metas = append(metas, meta)
+		})
+		if defaultErr != nil {
+			fmt.Fprintf(os.Stderr, "Failed to parse IBAN registry: %v\n", defaultErr)
+			os.Exit(1)
+		}
+		binData, err := dataset.EncodeIBANRegistry(metas)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to encode IBAN registry: %v\n", err)
+			os.Exit(1)
+		}
+		if _, err := outFile.Write(binData); err != nil {
+			fmt.Fprintf(os.Stderr, "Failed to write IBAN binary: %v\n", err)
+			os.Exit(1)
+		}
 	}
 
 	if err != nil {

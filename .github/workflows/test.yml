@@ -9,23 +9,29 @@ on:
 jobs:
   test:
     name: Run Go tests & upload coverage
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        go-version: ["1.22.x", "1.23.x", "1.24.x"]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: go.mod
+          go-version: ${{ matrix.go-version }}
       - name: Run tests with coverage
         run: |
           go test -coverprofile=coverage.out ./...
-      - name: Upload coverage artifact
+      - name: Upload coverage artifact (ubuntu-latest, latest Go only)
+        if: matrix.os == 'ubuntu-latest' && matrix.go-version == '1.24.x'
         uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: coverage.out
-      - name: Upload coverage to Codecov
+      - name: Upload coverage to Codecov (ubuntu-latest, latest Go only)
+        if: matrix.os == 'ubuntu-latest' && matrix.go-version == '1.24.x'
         uses: codecov/codecov-action@v4
         with:
           files: coverage.out

@@ -16,7 +16,7 @@
 | Tax IDs           | Regex, length, checksum                      |
 | EORI              | Regex, length                                |
 
-### Details and Examples
+## Details and Examples
 
 - **IBAN**: International Bank Account Number. Format, length, and MOD-97 checksum validation. Country-specific rules.
 - **BIC (SWIFT)**: 8 or 11 alphanumeric. Regex, length, and country/bank code lookup.
